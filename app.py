@@ -28,7 +28,7 @@ if "search_results" not in st.session_state:
     st.session_state.search_results = []
 
 # Search input
-title = st.text_input("Enter a movie or TV show title:", placeholder="e.g., The Dark Knight, Breaking Bad")
+title = st.text_input("Enter a movie or TV show title:", value="The Dark Knight")
 
 if st.button("Search", type="primary"):
     if not tmdb_key:
@@ -132,24 +132,37 @@ if st.session_state.selected_item:
         st.write(data["overview"] or "No overview available.")
 
         # Financials (movies only)
-        if data["media_type"] == "movie" and (data["budget"] or data["revenue"]):
+        if data["media_type"] == "movie":
             st.subheader("Financials")
-            fin_cols = st.columns(3)
 
-            with fin_cols[0]:
-                st.metric("Budget", data["budget"] or "N/A")
+            if data["budget"] or data["revenue"]:
+                fin_cols = st.columns(3)
 
-            with fin_cols[1]:
-                st.metric("Revenue", data["revenue"] or "N/A")
+                with fin_cols[0]:
+                    st.metric("Budget", data["budget"] or "N/A")
 
-            with fin_cols[2]:
-                if data["budget_raw"] and data["revenue_raw"] and data["budget_raw"] > 0:
-                    profit = data["revenue_raw"] - data["budget_raw"]
-                    roi = (profit / data["budget_raw"]) * 100
-                    profit_str = f"${profit / 1_000_000:.0f}M" if abs(profit) >= 1_000_000 else f"${profit:,}"
-                    st.metric("Profit", profit_str, delta=f"{roi:.0f}% ROI")
-                else:
-                    st.metric("Profit", "N/A")
+                with fin_cols[1]:
+                    st.metric("Revenue", data["revenue"] or "N/A")
+
+                with fin_cols[2]:
+                    if data["budget_raw"] and data["revenue_raw"] and data["budget_raw"] > 0:
+                        profit = data["revenue_raw"] - data["budget_raw"]
+                        roi = (profit / data["budget_raw"]) * 100
+                        profit_str = f"${profit / 1_000_000:.0f}M" if abs(profit) >= 1_000_000 else f"${profit:,}"
+                        st.metric("Profit", profit_str, delta=f"{roi:.0f}% ROI")
+                    else:
+                        st.metric("Profit", "N/A")
+
+                # Show data sources
+                sources = []
+                if data.get("budget_source"):
+                    sources.append(f"Budget: {data['budget_source']}")
+                if data.get("revenue"):
+                    sources.append("Revenue: TMDb")
+                if sources:
+                    st.caption(f"📊 Data sources: {' | '.join(sources)}")
+            else:
+                st.info("No budget or revenue information found in TMDb or Wikipedia.")
 
         # Crew section
         with st.expander("Crew"):

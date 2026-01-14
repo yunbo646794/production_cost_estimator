@@ -1,4 +1,5 @@
 from .tmdb import TMDbClient, get_poster_url, get_profile_url
+from .wikipedia import get_budget_from_wikipedia
 
 
 def format_currency(amount: int) -> str:
@@ -92,14 +93,33 @@ def get_merged_details(
 
     # Build result
     is_movie = media_type == "movie"
+    title = tmdb_data.get("title") if is_movie else tmdb_data.get("name")
+    release_date = tmdb_data.get("release_date") if is_movie else tmdb_data.get("first_air_date")
+    year = release_date[:4] if release_date else None
+
+    # Get budget from TMDb
+    budget = tmdb_data.get("budget") if is_movie else None
+    budget_formatted = format_currency(budget)
+    budget_source = "TMDb" if budget else None
+
+    # Fallback to Wikipedia if TMDb budget is missing
+    if is_movie and not budget:
+        try:
+            wiki_data = get_budget_from_wikipedia(title, year)
+            if wiki_data.get("budget_raw"):
+                budget = wiki_data["budget_raw"]
+                budget_formatted = wiki_data["budget"]
+                budget_source = "Wikipedia"
+        except Exception:
+            pass  # Silently fail Wikipedia lookup
 
     result = {
         # Basic info
-        "title": tmdb_data.get("title") if is_movie else tmdb_data.get("name"),
+        "title": title,
         "original_title": tmdb_data.get("original_title") if is_movie else tmdb_data.get("original_name"),
         "overview": tmdb_data.get("overview"),
         "poster_url": get_poster_url(tmdb_data.get("poster_path")),
-        "release_date": tmdb_data.get("release_date") if is_movie else tmdb_data.get("first_air_date"),
+        "release_date": release_date,
         "genres": [g["name"] for g in tmdb_data.get("genres", [])],
         "runtime": tmdb_data.get("runtime") if is_movie else (tmdb_data.get("episode_run_time", [None])[0] if tmdb_data.get("episode_run_time") else None),
         "status": tmdb_data.get("status"),
@@ -110,10 +130,11 @@ def get_merged_details(
         "tmdb_id": tmdb_id,
 
         # Financials (movies only)
-        "budget": format_currency(tmdb_data.get("budget")) if is_movie else None,
+        "budget": budget_formatted,
         "revenue": format_currency(tmdb_data.get("revenue")) if is_movie else None,
-        "budget_raw": tmdb_data.get("budget") if is_movie else None,
+        "budget_raw": budget,
         "revenue_raw": tmdb_data.get("revenue") if is_movie else None,
+        "budget_source": budget_source,
 
         # Ratings (TMDb)
         "vote_average": tmdb_data.get("vote_average"),
