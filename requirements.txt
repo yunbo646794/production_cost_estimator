@@ -2,3 +2,4 @@ streamlit
 requests
 python-dotenv
 beautifulsoup4
+streamlit-searchbox

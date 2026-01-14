@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
+from streamlit_searchbox import st_searchbox
 from api import TMDbClient, get_merged_details
 
 load_dotenv()
@@ -21,53 +22,40 @@ with st.sidebar:
     st.divider()
     st.caption("Data from [TMDb](https://www.themoviedb.org)")
 
-# Initialize session state
-if "selected_item" not in st.session_state:
-    st.session_state.selected_item = None
-if "search_results" not in st.session_state:
-    st.session_state.search_results = []
 
-# Search input
-title = st.text_input("Enter a movie or TV show title:", value="The Dark Knight")
+def search_tmdb(query: str):
+    """Search TMDb and return results for the searchbox dropdown."""
+    if not query or not tmdb_key:
+        return []
+    try:
+        tmdb = TMDbClient(tmdb_key)
+        results = tmdb.search_multi(query)
+        options = []
+        for item in results[:10]:  # Limit to 10 results
+            media_type = item.get("media_type", "movie")
+            title_text = item.get("title") or item.get("name", "Unknown")
+            year = (item.get("release_date") or item.get("first_air_date") or "")[:4]
+            type_icon = "🎬" if media_type == "movie" else "📺"
+            label = f"{type_icon} {title_text} ({year})" if year else f"{type_icon} {title_text}"
+            # Store both the display label and the data needed to fetch details
+            options.append((label, {"tmdb_id": item["id"], "media_type": media_type}))
+        return options
+    except Exception:
+        return []
 
-if st.button("Search", type="primary"):
-    if not tmdb_key:
-        st.error("Please enter your TMDb API key in the sidebar.")
-    elif not title:
-        st.warning("Please enter a title to search.")
-    else:
-        with st.spinner("Searching..."):
-            try:
-                tmdb = TMDbClient(tmdb_key)
-                results = tmdb.search_multi(title)
-                st.session_state.search_results = results
-                st.session_state.selected_item = None
-            except Exception as e:
-                st.error(f"Search failed: {str(e)}")
-                st.session_state.search_results = []
 
-# Display search results
-if st.session_state.search_results:
-    st.subheader("Select a title:")
-
-    for item in st.session_state.search_results:
-        media_type = item.get("media_type", "movie")
-        title_text = item.get("title") or item.get("name", "Unknown")
-        year = (item.get("release_date") or item.get("first_air_date") or "")[:4]
-        type_badge = "🎬 Movie" if media_type == "movie" else "📺 TV"
-
-        label = f"{type_badge} | {title_text} ({year})" if year else f"{type_badge} | {title_text}"
-
-        if st.button(label, key=f"{media_type}_{item['id']}"):
-            st.session_state.selected_item = {
-                "tmdb_id": item["id"],
-                "media_type": media_type
-            }
+# Search with autocomplete dropdown
+selected = st_searchbox(
+    search_tmdb,
+    key="movie_search",
+    placeholder="Search for a movie or TV show...",
+    default_options=[("🎬 The Dark Knight (2008)", {"tmdb_id": 155, "media_type": "movie"})],
+)
 
 # Display selected item details
-if st.session_state.selected_item:
-    tmdb_id = st.session_state.selected_item["tmdb_id"]
-    media_type = st.session_state.selected_item["media_type"]
+if selected:
+    tmdb_id = selected["tmdb_id"]
+    media_type = selected["media_type"]
 
     with st.spinner("Loading details..."):
         tmdb = TMDbClient(tmdb_key)
