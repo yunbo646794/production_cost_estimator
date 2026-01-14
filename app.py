@@ -153,14 +153,16 @@ if st.session_state.selected_item:
                     else:
                         st.metric("Profit", "N/A")
 
-                # Show data sources
-                sources = []
-                if data.get("budget_source"):
-                    sources.append(f"Budget: {data['budget_source']}")
-                if data.get("revenue"):
-                    sources.append("Revenue: TMDb")
-                if sources:
-                    st.caption(f"📊 Data sources: {' | '.join(sources)}")
+                # Show data sources with links
+                source_links = []
+                if data.get("budget_source") and data.get("budget_source_url"):
+                    source_links.append(f"Budget: [{data['budget_source']}]({data['budget_source_url']})")
+                elif data.get("budget_source"):
+                    source_links.append(f"Budget: {data['budget_source']}")
+                if data.get("revenue") and data.get("tmdb_url"):
+                    source_links.append(f"Revenue: [TMDb]({data['tmdb_url']})")
+                if source_links:
+                    st.caption(f"📊 Data sources: {' | '.join(source_links)}")
             else:
                 st.info("No budget or revenue information found in TMDb or Wikipedia.")
 

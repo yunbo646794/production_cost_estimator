@@ -33,12 +33,13 @@ def search_wikipedia(title: str, year: str = None) -> str | None:
 def get_budget_from_wikipedia(title: str, year: str = None) -> dict:
     """
     Fetch budget information from Wikipedia.
-    Returns dict with 'budget', 'budget_raw', and 'source'.
+    Returns dict with 'budget', 'budget_raw', 'source', and 'url'.
     """
     result = {
         "budget": None,
         "budget_raw": None,
-        "source": None
+        "source": None,
+        "url": None
     }
 
     try:
@@ -71,6 +72,11 @@ def get_budget_from_wikipedia(title: str, year: str = None) -> dict:
                         result["budget"] = format_budget(parsed)
                         result["budget_raw"] = parsed
                         result["source"] = "Wikipedia"
+                        # Create URL with text fragment to highlight budget
+                        # Extract clean budget text for highlighting (remove footnotes)
+                        clean_budget = re.sub(r'\[.*?\]', '', budget_text).strip()
+                        highlight_text = clean_budget.replace(' ', '%20').replace('$', '%24')
+                        result["url"] = f"{url}#:~:text={highlight_text}"
                 break
 
         return result
