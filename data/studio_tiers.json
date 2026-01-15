@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "description": "Production company to budget scale mapping",
+  "tiers": {
+    "Blockbuster": {
+      "budget_range": "$100M+",
+      "companies": [
+        "Marvel Studios", "DC Studios", "DC Films", "Warner Bros. Pictures",
+        "Walt Disney Pictures", "Pixar", "Lucasfilm", "20th Century Studios",
+        "Universal Pictures", "Paramount Pictures", "Sony Pictures",
+        "Columbia Pictures", "Legendary Pictures", "New Line Cinema",
+        "DreamWorks Animation", "Illumination", "Blue Sky Studios"
+      ]
+    },
+    "Major Studio": {
+      "budget_range": "$50-100M",
+      "companies": [
+        "Lionsgate", "MGM", "Amazon Studios", "Netflix", "Apple Studios",
+        "Amblin Entertainment", "Skydance Media", "Village Roadshow Pictures",
+        "Regency Enterprises", "Participant Media", "Imagine Entertainment",
+        "Working Title Films", "Bad Robot Productions", "Plan B Entertainment"
+      ]
+    },
+    "Mid-Budget": {
+      "budget_range": "$20-50M",
+      "companies": [
+        "Focus Features", "Searchlight Pictures", "Sony Pictures Classics",
+        "Annapurna Pictures", "STX Entertainment", "Bleecker Street",
+        "Entertainment One", "StudioCanal", "FilmNation Entertainment",
+        "Cross Creek Pictures", "Sierra/Affinity", "Thunder Road Films"
+      ]
+    },
+    "Indie": {
+      "budget_range": "$5-20M",
+      "companies": [
+        "A24", "Neon", "IFC Films", "Magnolia Pictures", "Oscilloscope",
+        "Roadside Attractions", "Vertical Entertainment", "RLJE Films",
+        "Gravitas Ventures", "XYZ Films", "The Orchard", "Cinereach",
+        "Part Two Pictures", "Killer Films", "Big Beach Films"
+      ]
+    },
+    "Micro": {
+      "budget_range": "<$5M",
+      "description": "First-time filmmakers, no-budget productions, self-financed projects"
+    }
+  }
+}

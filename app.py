@@ -1,197 +1,65 @@
 import os
+import json
 import streamlit as st
 from dotenv import load_dotenv
-from streamlit_searchbox import st_searchbox
-from api import TMDbClient, get_merged_details
 
 load_dotenv()
 
-st.set_page_config(page_title="Movie Info", page_icon="🎬", layout="wide")
+st.set_page_config(
+    page_title="Production Cost Estimator",
+    page_icon="🎬",
+    layout="wide"
+)
 
-st.title("🎬 Movie Information Finder")
+st.title("🎬 Production Cost Estimator")
 
-# Sidebar - API Configuration
+st.markdown("""
+Welcome to the Production Cost Estimator! This tool helps you:
+
+1. **🔍 Search Titles** - Look up movies and TV shows to see their budget, revenue, cast, and crew
+2. **💰 Estimate Costs** - Get production cost estimates based on comparable titles
+
+---
+
+### Getting Started
+
+Use the sidebar to navigate between pages:
+- **Title Search** - Search for movies/TV shows and save them to build your comparison database
+- **Cost Estimator** - Enter show attributes to find comparables and estimate production costs
+
+""")
+
+# Show database stats
+db_path = os.path.join(os.path.dirname(__file__), "data", "titles_db.json")
+try:
+    with open(db_path, "r") as f:
+        db = json.load(f)
+    title_count = len(db.get("titles", []))
+    st.info(f"📊 **Database Status:** {title_count} titles saved")
+except (FileNotFoundError, json.JSONDecodeError):
+    st.warning("📊 **Database Status:** No titles saved yet. Use Title Search to build your database!")
+
+st.markdown("""
+---
+
+### How It Works
+
+1. **Search** for movies/TV shows using the Title Search page
+2. **Save** interesting titles to your local database
+3. **Estimate** costs by selecting attributes in the Cost Estimator
+4. **Compare** your project to similar titles with known budgets
+
+""")
+
+# Sidebar
 with st.sidebar:
     st.header("API Key")
     tmdb_key = st.text_input(
         "TMDb API Key",
         value=os.getenv("TMDB_API_KEY", ""),
-        type="password"
+        type="password",
+        key="tmdb_key_home"
     )
     st.markdown("[Get free API key](https://www.themoviedb.org/settings/api)")
     st.divider()
     st.caption("Data from [TMDb](https://www.themoviedb.org)")
-
-
-def search_tmdb(query: str):
-    """Search TMDb and return results for the searchbox dropdown."""
-    if not query or not tmdb_key:
-        return []
-    try:
-        tmdb = TMDbClient(tmdb_key)
-        results = tmdb.search_multi(query)
-        options = []
-        for item in results[:10]:  # Limit to 10 results
-            media_type = item.get("media_type", "movie")
-            title_text = item.get("title") or item.get("name", "Unknown")
-            year = (item.get("release_date") or item.get("first_air_date") or "")[:4]
-            type_icon = "🎬" if media_type == "movie" else "📺"
-            label = f"{type_icon} {title_text} ({year})" if year else f"{type_icon} {title_text}"
-            # Store both the display label and the data needed to fetch details
-            options.append((label, {"tmdb_id": item["id"], "media_type": media_type}))
-        return options
-    except Exception:
-        return []
-
-
-# Search with autocomplete dropdown
-selected = st_searchbox(
-    search_tmdb,
-    key="movie_search",
-    placeholder="Search for a movie or TV show...",
-    default_options=[("🎬 The Dark Knight (2008)", {"tmdb_id": 155, "media_type": "movie"})],
-)
-
-# Display selected item details
-if selected:
-    tmdb_id = selected["tmdb_id"]
-    media_type = selected["media_type"]
-
-    with st.spinner("Loading details..."):
-        tmdb = TMDbClient(tmdb_key)
-        data, errors = get_merged_details(tmdb, tmdb_id, media_type)
-
-    if errors:
-        for error in errors:
-            st.warning(error)
-
-    if data:
-        st.divider()
-
-        # Header section
-        col1, col2 = st.columns([1, 3])
-
-        with col1:
-            if data["poster_url"]:
-                st.image(data["poster_url"], width=250)
-
-        with col2:
-            st.header(data["title"])
-            if data["original_title"] and data["original_title"] != data["title"]:
-                st.caption(f"Original: {data['original_title']}")
-
-            # Basic info line
-            info_parts = []
-            if data["release_date"]:
-                info_parts.append(data["release_date"][:4])
-            if data["runtime"]:
-                info_parts.append(f"{data['runtime']} min")
-            if data["status"]:
-                info_parts.append(data["status"])
-            st.caption(" | ".join(info_parts))
-
-            if data["genres"]:
-                st.markdown(f"**Genres:** {', '.join(data['genres'])}")
-
-            # Rating
-            if data["vote_average"]:
-                st.markdown(f"**Rating:** ⭐ {data['vote_average']:.1f}/10 ({data['vote_count']:,} votes)")
-
-            # Directors/Creators
-            if data["media_type"] == "movie" and data["directors"]:
-                st.markdown(f"**Director:** {', '.join(data['directors'])}")
-            elif data["created_by"]:
-                st.markdown(f"**Created by:** {', '.join(data['created_by'])}")
-
-            # TV specific info
-            if data["media_type"] == "tv":
-                tv_info = []
-                if data["number_of_seasons"]:
-                    tv_info.append(f"{data['number_of_seasons']} seasons")
-                if data["number_of_episodes"]:
-                    tv_info.append(f"{data['number_of_episodes']} episodes")
-                if tv_info:
-                    st.markdown(f"**Episodes:** {', '.join(tv_info)}")
-                if data["networks"]:
-                    st.markdown(f"**Network:** {', '.join(data['networks'])}")
-
-        # Plot
-        st.subheader("Plot")
-        st.write(data["overview"] or "No overview available.")
-
-        # Financials (movies only)
-        if data["media_type"] == "movie":
-            st.subheader("Financials")
-
-            if data["budget"] or data["revenue"]:
-                fin_cols = st.columns(3)
-
-                with fin_cols[0]:
-                    st.metric("Budget", data["budget"] or "N/A")
-
-                with fin_cols[1]:
-                    st.metric("Revenue", data["revenue"] or "N/A")
-
-                with fin_cols[2]:
-                    if data["budget_raw"] and data["revenue_raw"] and data["budget_raw"] > 0:
-                        profit = data["revenue_raw"] - data["budget_raw"]
-                        roi = (profit / data["budget_raw"]) * 100
-                        profit_str = f"${profit / 1_000_000:.0f}M" if abs(profit) >= 1_000_000 else f"${profit:,}"
-                        st.metric("Profit", profit_str, delta=f"{roi:.0f}% ROI")
-                    else:
-                        st.metric("Profit", "N/A")
-
-                # Show data sources with links
-                source_links = []
-                if data.get("budget_source") and data.get("budget_source_url"):
-                    source_links.append(f"Budget: [{data['budget_source']}]({data['budget_source_url']})")
-                elif data.get("budget_source"):
-                    source_links.append(f"Budget: {data['budget_source']}")
-                if data.get("revenue") and data.get("tmdb_url"):
-                    source_links.append(f"Revenue: [TMDb]({data['tmdb_url']})")
-                if source_links:
-                    st.caption(f"📊 Data sources: {' | '.join(source_links)}")
-            else:
-                st.info("No budget or revenue information found in TMDb or Wikipedia.")
-
-        # Crew section
-        with st.expander("Crew"):
-            crew_items = []
-            if data["directors"]:
-                crew_items.append(f"**Director:** {', '.join(data['directors'])}")
-            if data["writers"]:
-                crew_items.append(f"**Writers:** {', '.join(data['writers'][:5])}")
-            if data["producers"]:
-                crew_items.append(f"**Producers:** {', '.join(data['producers'])}")
-            if data["composers"]:
-                crew_items.append(f"**Composer:** {', '.join(data['composers'])}")
-            if data["cinematographers"]:
-                crew_items.append(f"**Cinematography:** {', '.join(data['cinematographers'])}")
-
-            if crew_items:
-                for item in crew_items:
-                    st.markdown(item)
-            else:
-                st.write("No crew information available.")
-
-        # Cast section
-        with st.expander("Cast"):
-            if data["cast"]:
-                for actor in data["cast"]:
-                    cast_col1, cast_col2 = st.columns([1, 4])
-                    with cast_col1:
-                        if actor["profile_url"]:
-                            st.image(actor["profile_url"], width=60)
-                    with cast_col2:
-                        st.markdown(f"**{actor['name']}** as {actor['character']}")
-            else:
-                st.write("No cast information available.")
-
-        # Additional info
-        with st.expander("Additional Info"):
-            if data["production_companies"]:
-                st.markdown(f"**Production:** {', '.join(data['production_companies'][:5])}")
-            if data["production_countries"]:
-                st.markdown(f"**Countries:** {', '.join(data['production_countries'])}")
-            if data["original_language"]:
-                st.markdown(f"**Language:** {data['original_language'].upper()}")

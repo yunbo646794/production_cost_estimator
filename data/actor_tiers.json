@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "description": "Actor tier classifications for star power estimation",
+  "tiers": {
+    "A-List": {
+      "salary_range": "$15-30M per film",
+      "actors": [
+        "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Denzel Washington",
+        "Will Smith", "Robert Downey Jr.", "Dwayne Johnson", "Ryan Reynolds",
+        "Tom Hanks", "Matt Damon", "George Clooney", "Johnny Depp",
+        "Scarlett Johansson", "Jennifer Lawrence", "Angelina Jolie", "Julia Roberts",
+        "Sandra Bullock", "Margot Robbie", "Gal Gadot", "Emma Stone",
+        "Chris Hemsworth", "Chris Evans", "Chris Pratt", "Ryan Gosling",
+        "Joaquin Phoenix", "Christian Bale", "Benedict Cumberbatch", "Chadwick Boseman",
+        "Timothee Chalamet", "Zendaya", "Tom Holland", "Florence Pugh",
+        "Anne Hathaway", "Natalie Portman", "Meryl Streep", "Cate Blanchett",
+        "Nicole Kidman", "Charlize Theron", "Reese Witherspoon", "Amy Adams",
+        "Adam Sandler", "Kevin Hart", "Seth Rogen", "Melissa McCarthy",
+        "Jason Momoa", "Idris Elba", "Samuel L. Jackson", "Morgan Freeman",
+        "Harrison Ford", "Keanu Reeves", "Vin Diesel", "Jason Statham"
+      ]
+    },
+    "B-List": {
+      "salary_range": "$3-10M per film",
+      "actors": [
+        "John Boyega", "Oscar Isaac", "Pedro Pascal", "John Krasinski",
+        "Emily Blunt", "Jessica Chastain", "Viola Davis", "Lupita Nyong'o",
+        "Michael B. Jordan", "Daniel Kaluuya", "Rami Malek", "Austin Butler",
+        "Paul Rudd", "Jason Sudeikis", "Adam Driver", "Andrew Garfield",
+        "Miles Teller", "Glen Powell", "Sydney Sweeney", "Anya Taylor-Joy",
+        "Saoirse Ronan", "Rachel McAdams", "Elizabeth Olsen", "Hailee Steinfeld",
+        "Dave Bautista", "John Cena", "Simu Liu", "Jonathan Majors",
+        "Awkwafina", "Ke Huy Quan", "Michelle Yeoh", "Stephanie Hsu",
+        "Colin Farrell", "Michael Fassbender", "Jake Gyllenhaal", "Jeremy Renner",
+        "Josh Brolin", "Ethan Hawke", "Willem Dafoe", "Mark Ruffalo",
+        "Paul Dano", "Barry Keoghan", "Robert Pattinson", "Kristen Stewart",
+        "Dakota Johnson", "Ana de Armas", "Jenna Ortega", "Maitreyi Ramakrishnan",
+        "Aubrey Plaza", "Keke Palmer", "LaKeith Stanfield", "Brian Tyree Henry"
+      ]
+    },
+    "Rising Stars": {
+      "salary_range": "$500K-2M per film",
+      "description": "Recent breakout performers, award nominees, or ascending talent"
+    },
+    "Ensemble/Unknown": {
+      "salary_range": "<$500K per film",
+      "description": "Character actors, newcomers, or ensemble casts without major names"
+    }
+  }
+}
