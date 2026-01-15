@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from similarity import find_comparable_titles
+from estimator import adjust_for_inflation, format_currency
 
 load_dotenv()
 
@@ -15,6 +16,17 @@ st.set_page_config(page_title="Cost Estimator", page_icon="💰", layout="wide")
 st.title("💰 Production Cost Estimator")
 
 st.markdown("Select attributes for your project to find comparable titles and estimate production costs.")
+
+# Sidebar - must be defined before main content uses the toggle
+with st.sidebar:
+    st.header("Settings")
+    adjust_inflation = st.toggle("Adjust for inflation", value=True,
+                                  help="Convert all budgets to 2024 dollars")
+
+    st.divider()
+
+    st.header("Database Stats")
+    # Will be populated after load_titles_db is defined
 
 # Load reference data - use absolute path
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
@@ -113,35 +125,51 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                         if title.get("poster_url"):
                             st.image(title["poster_url"], width=80)
                     with tcol2:
-                        year = title.get("release_date", "")[:4] if title.get("release_date") else "N/A"
-                        st.markdown(f"**{title.get('title', 'Unknown')}** ({year})")
+                        year_str = title.get("release_date", "")[:4] if title.get("release_date") else "N/A"
+                        st.markdown(f"**{title.get('title', 'Unknown')}** ({year_str})")
                         if reasons:
                             st.caption(f"**Why similar:** {', '.join(reasons)}")
                         else:
                             st.caption(f"{', '.join(title.get('genres', [])[:3])}")
                     with tcol3:
                         st.metric("Match", f"{score:.0f}%")
-                        if title.get("budget"):
-                            st.caption(f"Budget: {title['budget']}")
+                        if title.get("budget_raw"):
+                            original = title["budget_raw"]
+                            if adjust_inflation and year_str.isdigit():
+                                adjusted = adjust_for_inflation(original, int(year_str))
+                                st.caption(f"Budget: {format_currency(original)} → {format_currency(adjusted)} (2024$)")
+                            else:
+                                st.caption(f"Budget: {format_currency(original)}")
                     st.divider()
 
             # Calculate budget estimate from comparable titles
-            budgets = [c["title"].get("budget_raw") for c in comparables if c["title"].get("budget_raw")]
+            budgets = []
+            for c in comparables:
+                if c["title"].get("budget_raw"):
+                    original = c["title"]["budget_raw"]
+                    year_str = c["title"].get("release_date", "")[:4]
+                    if adjust_inflation and year_str.isdigit():
+                        budgets.append(adjust_for_inflation(original, int(year_str)))
+                    else:
+                        budgets.append(original)
+
             if budgets:
                 avg_budget = sum(budgets) / len(budgets)
                 low_budget = min(budgets)
                 high_budget = max(budgets)
 
                 st.subheader("Estimated Budget Range")
+                if adjust_inflation:
+                    st.caption("📈 All budgets adjusted to 2024 dollars")
                 est_cols = st.columns(3)
                 with est_cols[0]:
-                    st.metric("Low Estimate", f"${low_budget / 1_000_000:.0f}M",
+                    st.metric("Low Estimate", format_currency(int(low_budget)),
                               help="Lowest budget among comparable titles")
                 with est_cols[1]:
-                    st.metric("Base Estimate", f"${avg_budget / 1_000_000:.0f}M",
+                    st.metric("Base Estimate", format_currency(int(avg_budget)),
                               help="Average budget of comparable titles")
                 with est_cols[2]:
-                    st.metric("High Estimate", f"${high_budget / 1_000_000:.0f}M",
+                    st.metric("High Estimate", format_currency(int(high_budget)),
                               help="Highest budget among comparable titles")
 
                 st.caption(f"📊 Based on {len(budgets)} comparable titles with budget data")
@@ -153,11 +181,9 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
     else:
         st.error("No titles in database! Go to Title Search and save some titles first.")
 
-# Sidebar
+# Update sidebar with database stats
 with st.sidebar:
-    st.header("Database Stats")
     db = load_titles_db()
     st.metric("Titles Saved", len(db.get("titles", [])))
-
     st.divider()
     st.caption("Build your database by saving titles from the Title Search page.")
