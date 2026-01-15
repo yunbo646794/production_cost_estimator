@@ -1,7 +1,12 @@
 import os
+import sys
 import json
 import streamlit as st
 from dotenv import load_dotenv
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from similarity import find_comparable_titles
 
 load_dotenv()
 
@@ -27,8 +32,8 @@ def load_studio_tiers():
         return json.load(f)
 
 
-@st.cache_data
 def load_titles_db():
+    """Load titles database (no caching - always read fresh data)."""
     try:
         with open(os.path.join(DATA_DIR, "titles_db.json"), "r") as f:
             return json.load(f)
@@ -81,35 +86,69 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
         st.warning(f"⚠️ Only {len(titles)} titles in database. Add more titles via Title Search for better estimates!")
 
     if titles:
+        # Build user attributes dict for similarity matching
+        user_attrs = {
+            "genre": genre,
+            "scale": scale,
+            "vfx": vfx,
+            "action": action,
+            "period": period,
+            "star_power": star_power,
+        }
+
+        # Find comparable titles
+        comparables = find_comparable_titles(user_attrs, titles, limit=5)
+
         st.subheader("Comparable Titles")
-        st.info("🚧 Similarity matching coming soon! For now, showing all saved titles.")
 
-        for title in titles[:5]:
-            with st.container():
-                tcol1, tcol2, tcol3 = st.columns([1, 3, 1])
-                with tcol1:
-                    if title.get("poster_url"):
-                        st.image(title["poster_url"], width=80)
-                with tcol2:
-                    st.markdown(f"**{title.get('title', 'Unknown')}** ({title.get('release_date', '')[:4] if title.get('release_date') else 'N/A'})")
-                    st.caption(f"{', '.join(title.get('genres', [])[:3])}")
-                with tcol3:
-                    if title.get("budget"):
-                        st.metric("Budget", title["budget"])
-                st.divider()
+        if comparables:
+            for comp in comparables:
+                title = comp["title"]
+                score = comp["score"]
+                reasons = comp["reasons"]
 
-        # Placeholder estimate
-        st.subheader("Estimated Budget Range")
+                with st.container():
+                    tcol1, tcol2, tcol3 = st.columns([1, 3, 1])
+                    with tcol1:
+                        if title.get("poster_url"):
+                            st.image(title["poster_url"], width=80)
+                    with tcol2:
+                        year = title.get("release_date", "")[:4] if title.get("release_date") else "N/A"
+                        st.markdown(f"**{title.get('title', 'Unknown')}** ({year})")
+                        if reasons:
+                            st.caption(f"**Why similar:** {', '.join(reasons)}")
+                        else:
+                            st.caption(f"{', '.join(title.get('genres', [])[:3])}")
+                    with tcol3:
+                        st.metric("Match", f"{score:.0f}%")
+                        if title.get("budget"):
+                            st.caption(f"Budget: {title['budget']}")
+                    st.divider()
 
-        est_cols = st.columns(3)
-        with est_cols[0]:
-            st.metric("Low Estimate", "$15M", help="Conservative estimate based on comparable titles")
-        with est_cols[1]:
-            st.metric("Base Estimate", "$25M", help="Most likely budget based on attributes")
-        with est_cols[2]:
-            st.metric("High Estimate", "$40M", help="Upper range if scope increases")
+            # Calculate budget estimate from comparable titles
+            budgets = [c["title"].get("budget_raw") for c in comparables if c["title"].get("budget_raw")]
+            if budgets:
+                avg_budget = sum(budgets) / len(budgets)
+                low_budget = min(budgets)
+                high_budget = max(budgets)
 
-        st.caption("⚠️ Estimates are placeholders. Full calculation coming in Phase 3!")
+                st.subheader("Estimated Budget Range")
+                est_cols = st.columns(3)
+                with est_cols[0]:
+                    st.metric("Low Estimate", f"${low_budget / 1_000_000:.0f}M",
+                              help="Lowest budget among comparable titles")
+                with est_cols[1]:
+                    st.metric("Base Estimate", f"${avg_budget / 1_000_000:.0f}M",
+                              help="Average budget of comparable titles")
+                with est_cols[2]:
+                    st.metric("High Estimate", f"${high_budget / 1_000_000:.0f}M",
+                              help="Highest budget among comparable titles")
+
+                st.caption(f"📊 Based on {len(budgets)} comparable titles with budget data")
+            else:
+                st.info("No budget data available for comparable titles.")
+        else:
+            st.info("No similar titles found. Try adjusting your attributes.")
 
     else:
         st.error("No titles in database! Go to Title Search and save some titles first.")

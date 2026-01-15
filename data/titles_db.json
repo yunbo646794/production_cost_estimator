@@ -111,7 +111,12 @@
           "character": "Scarecrow",
           "profile_url": "https://image.tmdb.org/t/p/w185/llkbyWKwpfowZ6C8peBjIV9jj99.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Avatar",
@@ -221,7 +226,12 @@
           "character": "Tsu'Tey",
           "profile_url": "https://image.tmdb.org/t/p/w185/nmgOd3X2Xn3jIp9OLCRJzLExRWN.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Avengers: Endgame",
@@ -328,7 +338,12 @@
           "character": "Doctor Strange",
           "profile_url": "https://image.tmdb.org/t/p/w185/wz3MRiMmoz6b5X3oSzMRC9nLxY1.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Titanic",
@@ -373,8 +388,8 @@
         "James Cameron"
       ],
       "producers": [
-        "Jon Landau",
         "James Cameron",
+        "Jon Landau",
         "Rae Sanchini"
       ],
       "composers": [
@@ -434,7 +449,12 @@
           "character": "Thomas Andrews",
           "profile_url": "https://image.tmdb.org/t/p/w185/zPkpRPdW7rEm4fjgoJNz8hAZ6av.jpg"
         }
-      ]
+      ],
+      "computed_period": "Period (1900-1980)",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Jurassic Park",
@@ -539,7 +559,12 @@
           "character": "Arnold",
           "profile_url": "https://image.tmdb.org/t/p/w185/AiAYAqwpM5xmiFrAIeQvUXDCVvo.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "High",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "The Lord of the Rings: The Return of the King",
@@ -649,7 +674,12 @@
           "character": "\u00c9owyn",
           "profile_url": "https://image.tmdb.org/t/p/w185/lVkzCNNGwesZjOmwrDjro6ZPar.jpg"
         }
-      ]
+      ],
+      "computed_period": "Historical (pre-1900)",
+      "computed_vfx": "Moderate",
+      "computed_action": "High",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Star Wars: The Force Awakens",
@@ -757,7 +787,12 @@
           "character": "General Hux",
           "profile_url": "https://image.tmdb.org/t/p/w185/uDbwncuKlqL0fAuucXSvgakJDrc.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Inception",
@@ -865,7 +900,12 @@
           "character": "Maurice Fischer",
           "profile_url": "https://image.tmdb.org/t/p/w185/4RxwgdF1WXKjXaaAXIWeFqtMWfD.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "The Matrix",
@@ -974,7 +1014,12 @@
           "character": "Switch",
           "profile_url": "https://image.tmdb.org/t/p/w185/wfTCwkIDJjH5k5DtuvcjP52PrLc.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "High",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Gladiator",
@@ -1020,14 +1065,14 @@
         "Ridley Scott"
       ],
       "writers": [
+        "David Franzoni",
         "William Nicholson",
-        "John Logan",
-        "David Franzoni"
+        "John Logan"
       ],
       "producers": [
         "Branko Lustig",
-        "Douglas Wick",
-        "David Franzoni"
+        "David Franzoni",
+        "Douglas Wick"
       ],
       "composers": [
         "Hans Zimmer",
@@ -1087,7 +1132,12 @@
           "character": "Quintus",
           "profile_url": "https://image.tmdb.org/t/p/w185/qMuQWxUQ2sXDiN2d9EDVT5VXHo2.jpg"
         }
-      ]
+      ],
+      "computed_period": "Historical (pre-1900)",
+      "computed_vfx": "Moderate",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "The Shawshank Redemption",
@@ -1191,7 +1241,12 @@
           "character": "Skeet",
           "profile_url": "https://image.tmdb.org/t/p/w185/y13c1a4keaLnoTbi3dERwolQXWP.jpg"
         }
-      ]
+      ],
+      "computed_period": "Period (1900-1980)",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Pulp Fiction",
@@ -1296,7 +1351,12 @@
           "character": "Fabienne",
           "profile_url": "https://image.tmdb.org/t/p/w185/coLcUZeavLvAZxHZTq7hzwUsKOx.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Fight Club",
@@ -1406,7 +1466,12 @@
           "character": "Thomas at Remaining Men Together",
           "profile_url": "https://image.tmdb.org/t/p/w185/36LEerIIN7gpG52mM3Ier7YWDbh.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Forrest Gump",
@@ -1513,7 +1578,12 @@
           "character": "Nurse at Park Bench",
           "profile_url": null
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "The Silence of the Lambs",
@@ -1620,7 +1690,12 @@
           "character": "Lamar",
           "profile_url": "https://image.tmdb.org/t/p/w185/9aALfdCcP0PDYcBmqB6auHF0Eud.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Se7en",
@@ -1727,7 +1802,12 @@
           "character": "Workman at Door of Somerset's Office",
           "profile_url": "https://image.tmdb.org/t/p/w185/8kmZnMFtItkqASxsRtsSBZbbBBl.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "GoodFellas",
@@ -1830,7 +1910,12 @@
           "character": "Morris Kessler",
           "profile_url": "https://image.tmdb.org/t/p/w185/zaw5Tyk2K6aawV13fQ4tSPdbEUp.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "The Departed",
@@ -1940,7 +2025,12 @@
           "character": "Cousin Sean",
           "profile_url": "https://image.tmdb.org/t/p/w185/obSUGc68mQDvFONalMg25Xw5GZM.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "No Country for Old Men",
@@ -2050,7 +2140,12 @@
           "character": "El Paso Sheriff",
           "profile_url": "https://image.tmdb.org/t/p/w185/7ZgjcEJWDpQhtwLBg44uJPUlPvp.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "There Will Be Blood",
@@ -2156,7 +2251,12 @@
           "character": "Mr. Bandy",
           "profile_url": null
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Get Out",
@@ -2264,7 +2364,12 @@
           "character": "Rod Williams",
           "profile_url": "https://image.tmdb.org/t/p/w185/9MDi35Fy6ym7SYbO3B04vf1vBnm.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Micro (<$5M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "A Quiet Place",
@@ -2357,7 +2462,12 @@
           "character": "Old Man's Dead Wife (uncredited)",
           "profile_url": "https://image.tmdb.org/t/p/w185/bpZOS9oDeawi9zveJ3Gzw5P5A3j.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "The Conjuring",
@@ -2464,7 +2574,12 @@
           "character": "April",
           "profile_url": "https://image.tmdb.org/t/p/w185/yK2pAqrhei8N49ZOHL8u6ccaSPr.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "It",
@@ -2574,7 +2689,12 @@
           "character": "Belch Huggins",
           "profile_url": "https://image.tmdb.org/t/p/w185/wUxtIWMCAkFvxLHT5idYvpEuhiC.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "With",
@@ -2631,7 +2751,12 @@
           "character": "\uc591\uad6c",
           "profile_url": null
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Dialogue-Driven",
+      "computed_scale": "Unknown",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Parasite",
@@ -2672,8 +2797,8 @@
         "Bong Joon Ho"
       ],
       "writers": [
-        "Bong Joon Ho",
-        "Han Jin-won"
+        "Han Jin-won",
+        "Bong Joon Ho"
       ],
       "producers": [
         "Jang Young-hwan",
@@ -2737,7 +2862,12 @@
           "character": "Da-song",
           "profile_url": "https://image.tmdb.org/t/p/w185/vZadA6ip6V2kh0VZW9RwnLcYFgW.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "The Witch",
@@ -2793,8 +2923,8 @@
       ],
       "producers": [
         "Daniel Bekerman",
-        "Jodi Redmond",
-        "Lars Knudsen"
+        "Lars Knudsen",
+        "Jodi Redmond"
       ],
       "composers": [
         "Mark Korven"
@@ -2853,7 +2983,12 @@
           "character": "Black Phillip (voice)",
           "profile_url": "https://image.tmdb.org/t/p/w185/wcZ8ubxahGsTHtT6EfxWqkAEPD5.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "Moderate",
+      "computed_scale": "Micro (<$5M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Midsommar",
@@ -2901,7 +3036,7 @@
       "producers": [
         "Lars Knudsen",
         "Beau Ferris",
-        "Fredrik Heinig"
+        "Philip Westgren"
       ],
       "composers": [
         "Bobby Krlic"
@@ -2960,7 +3095,12 @@
           "character": "Ulf",
           "profile_url": "https://image.tmdb.org/t/p/w185/eiOu61USG30JqBKq6Axc05IU6yc.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "The Hangover",
@@ -3066,7 +3206,12 @@
           "character": "Mike Tyson",
           "profile_url": "https://image.tmdb.org/t/p/w185/w0Bp2fWbL9C7KtciF56Qey8iY00.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "The Suspended Vocation",
@@ -3161,7 +3306,12 @@
           "character": "Le sup\u00e9rieur",
           "profile_url": "https://image.tmdb.org/t/p/w185/5niM7CU2pMMiF5F2RA7SjrfLx7L.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Dialogue-Driven",
+      "computed_scale": "Unknown",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Superbad",
@@ -3266,7 +3416,12 @@
           "character": "Mark",
           "profile_url": "https://image.tmdb.org/t/p/w185/obSUGc68mQDvFONalMg25Xw5GZM.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Step Brothers",
@@ -3374,7 +3529,12 @@
           "character": "Tiffany",
           "profile_url": null
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Moonlight",
@@ -3406,7 +3566,7 @@
       "budget_source_url": "https://www.themoviedb.org/movie/376867",
       "tmdb_url": "https://www.themoviedb.org/movie/376867",
       "vote_average": 7.362,
-      "vote_count": 7371,
+      "vote_count": 7373,
       "number_of_seasons": null,
       "number_of_episodes": null,
       "networks": null,
@@ -3479,7 +3639,12 @@
           "character": "Terrence",
           "profile_url": "https://image.tmdb.org/t/p/w185/1i2uuhUHDBmtSBLq6gpnGI50sBf.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Micro (<$5M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Lady Bird",
@@ -3512,7 +3677,7 @@
       "budget_source_url": "https://www.themoviedb.org/movie/391713",
       "tmdb_url": "https://www.themoviedb.org/movie/391713",
       "vote_average": 7.253,
-      "vote_count": 8868,
+      "vote_count": 8869,
       "number_of_seasons": null,
       "number_of_episodes": null,
       "networks": null,
@@ -3585,7 +3750,12 @@
           "character": "Miguel McPherson",
           "profile_url": "https://image.tmdb.org/t/p/w185/tBnYesvg7JFIiqZJUwgEyZxNIt0.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Light",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Piper",
@@ -3639,7 +3809,12 @@
         "Derek Williams",
         "Erik Smitt"
       ],
-      "cast": []
+      "cast": [],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Light",
+      "computed_scale": "Unknown",
+      "computed_star_power": "Ensemble/Unknown"
     },
     {
       "title": "Manchester by the Sea",
@@ -3749,7 +3924,12 @@
           "character": "Young Patrick Chandler",
           "profile_url": "https://image.tmdb.org/t/p/w185/6nX3kmyZ1r8iifmm8h0u89qEL1D.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Whiplash",
@@ -3855,7 +4035,12 @@
           "character": "Dorm Neighbor",
           "profile_url": "https://image.tmdb.org/t/p/w185/7BvCZldRpYB4UxJv5IxNSMSYgoe.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Micro (<$5M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Room",
@@ -3967,7 +4152,12 @@
           "character": "Officer Grabowski",
           "profile_url": "https://image.tmdb.org/t/p/w185/cA2OocnwkH9bO1rT6TcH3daB6r4.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Practical Only",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "Interstellar",
@@ -4076,7 +4266,12 @@
           "character": "Donald",
           "profile_url": "https://image.tmdb.org/t/p/w185/8Y1sjBdnVR483S8PrnAQzlESwhx.jpg"
         }
-      ]
+      ],
+      "computed_period": "Futuristic",
+      "computed_vfx": "Heavy",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Arrival",
@@ -4183,7 +4378,12 @@
           "character": "Dr. Kettler",
           "profile_url": "https://image.tmdb.org/t/p/w185/aYHpKplVgIeuN8VoJq5R1Im9QKi.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Blade Runner 2049",
@@ -4221,7 +4421,7 @@
       "budget_source_url": "https://www.themoviedb.org/movie/335984",
       "tmdb_url": "https://www.themoviedb.org/movie/335984",
       "vote_average": 7.59,
-      "vote_count": 14673,
+      "vote_count": 14674,
       "number_of_seasons": null,
       "number_of_episodes": null,
       "networks": null,
@@ -4234,9 +4434,9 @@
         "Michael Green"
       ],
       "producers": [
-        "Tim Gamble",
         "Bill Carraro",
-        "Andrew A. Kosove"
+        "Tim Gamble",
+        "Frank Giustra"
       ],
       "composers": [
         "Hans Zimmer",
@@ -4296,7 +4496,12 @@
           "character": "Freysa",
           "profile_url": "https://image.tmdb.org/t/p/w185/hkzC5aJKTiuCchBpybaHDVngYZW.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Moderate",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Ex Machina",
@@ -4405,7 +4610,12 @@
           "character": "Amber",
           "profile_url": "https://image.tmdb.org/t/p/w185/gblJEM8QEESmsHJ20m3UcFAWi6m.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Moderate",
+      "computed_action": "Moderate",
+      "computed_scale": "Indie ($5-20M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Dune",
@@ -4511,7 +4721,12 @@
           "character": "Dr. Wellington Yueh",
           "profile_url": "https://image.tmdb.org/t/p/w185/7GHGozSsjERpQwvVwIhd1i6Yl7Y.jpg"
         }
-      ]
+      ],
+      "computed_period": "Futuristic",
+      "computed_vfx": "Heavy",
+      "computed_action": "High",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Spider-Man: Into the Spider-Verse",
@@ -4623,7 +4838,12 @@
           "character": "Peni Parker (voice)",
           "profile_url": "https://image.tmdb.org/t/p/w185/6QnVIyHKbzx0ZsUr3BmIwnZxujL.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Moderate",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Toy Story",
@@ -4730,7 +4950,12 @@
           "character": "Mrs. Davis (voice)",
           "profile_url": "https://image.tmdb.org/t/p/w185/ypAppMZ1Q99cBjtX4BAnZmWjVXe.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "A-List"
     },
     {
       "title": "Finding Nemo",
@@ -4836,7 +5061,12 @@
           "character": "Deb / Flo (voice)",
           "profile_url": "https://image.tmdb.org/t/p/w185/dwTjtleLh1uu8n9AvUCv0n3mi2R.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Light",
+      "computed_scale": "Major Studio ($50-100M)",
+      "computed_star_power": "B-List"
     },
     {
       "title": "Coco",
@@ -4943,7 +5173,12 @@
           "character": "Plaza Mariachi / Gustavo (voice)",
           "profile_url": "https://image.tmdb.org/t/p/w185/wwWs0u2QDz1XOakR05C0BYJCfM1.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Moderate",
+      "computed_scale": "Blockbuster ($100M+)",
+      "computed_star_power": "Rising Stars"
     },
     {
       "title": "The Lion King",
@@ -4977,7 +5212,7 @@
       "budget_source_url": "https://www.themoviedb.org/movie/8587",
       "tmdb_url": "https://www.themoviedb.org/movie/8587",
       "vote_average": 8.255,
-      "vote_count": 19276,
+      "vote_count": 19278,
       "number_of_seasons": null,
       "number_of_episodes": null,
       "networks": null,
@@ -5051,7 +5286,12 @@
           "character": "Young Nala (voice)",
           "profile_url": "https://image.tmdb.org/t/p/w185/nH34QlGneoVleFr6Zafl95kFMxt.jpg"
         }
-      ]
+      ],
+      "computed_period": "Contemporary",
+      "computed_vfx": "Heavy",
+      "computed_action": "Moderate",
+      "computed_scale": "Mid-Budget ($20-50M)",
+      "computed_star_power": "Rising Stars"
     }
   ]
 }

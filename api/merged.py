@@ -1,5 +1,6 @@
 from .tmdb import TMDbClient, get_poster_url, get_profile_url
 from .wikipedia import get_budget_from_wikipedia
+from .attributes import compute_all_attributes
 
 
 def format_currency(amount: int) -> str:
@@ -15,8 +16,8 @@ def format_currency(amount: int) -> str:
     return f"${amount:,}"
 
 
-def extract_crew(credits: dict) -> dict:
-    """Extract key crew members from credits."""
+def extract_crew(credits: dict) -> tuple[dict, list]:
+    """Extract key crew members from credits and all job titles."""
     crew = credits.get("crew", [])
     result = {
         "directors": [],
@@ -36,15 +37,18 @@ def extract_crew(credits: dict) -> dict:
         "Director of Photography": "cinematographers",
     }
 
+    all_jobs = []
     for person in crew:
         job = person.get("job")
+        if job:
+            all_jobs.append(job)
         if job in job_mapping:
             key = job_mapping[job]
             name = person.get("name")
             if name and name not in result[key]:
                 result[key].append(name)
 
-    return result
+    return result, all_jobs
 
 
 def extract_cast(credits: dict, limit: int = 10) -> list:
@@ -88,7 +92,7 @@ def get_merged_details(
         return None, errors
 
     # Extract crew and cast
-    crew = extract_crew(credits) if credits else {}
+    crew, crew_jobs = extract_crew(credits) if credits else ({}, [])
     cast = extract_cast(credits) if credits else []
 
     # Build result
@@ -163,5 +167,15 @@ def get_merged_details(
         "cinematographers": crew.get("cinematographers", []),
         "cast": cast,
     }
+
+    # Compute auto-detected attributes
+    computed = compute_all_attributes(result, crew_jobs)
+    result.update({
+        "computed_period": computed["period"],
+        "computed_vfx": computed["vfx"],
+        "computed_action": computed["action"],
+        "computed_scale": computed["scale"],
+        "computed_star_power": computed["star_power"],
+    })
 
     return result, errors

@@ -224,3 +224,18 @@ if selected:
                 st.markdown(f"**Countries:** {', '.join(data['production_countries'])}")
             if data["original_language"]:
                 st.markdown(f"**Language:** {data['original_language'].upper()}")
+
+        # Computed Attributes (for Cost Estimator)
+        with st.expander("Computed Attributes", expanded=True):
+            attr_cols = st.columns(5)
+            with attr_cols[0]:
+                st.metric("Period", data.get("computed_period", "N/A"))
+            with attr_cols[1]:
+                st.metric("VFX", data.get("computed_vfx", "N/A"))
+            with attr_cols[2]:
+                st.metric("Action", data.get("computed_action", "N/A"))
+            with attr_cols[3]:
+                scale = data.get("computed_scale", "N/A")
+                st.metric("Scale", scale.split(" (")[0] if scale else "N/A")
+            with attr_cols[4]:
+                st.metric("Star Power", data.get("computed_star_power", "N/A"))
