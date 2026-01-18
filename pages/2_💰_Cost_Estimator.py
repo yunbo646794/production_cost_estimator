@@ -13,6 +13,24 @@ load_dotenv()
 
 st.set_page_config(page_title="Cost Estimator", page_icon="💰", layout="wide")
 
+
+def get_recency_multiplier(year: int) -> float:
+    """Get recency weight based on release year.
+
+    Recent films are more relevant to current production costs.
+    Industry cost structure has changed significantly over time.
+    """
+    if year >= 2022:
+        return 2.0   # Post-COVID, current market
+    elif year >= 2019:
+        return 1.5   # COVID era, still relevant
+    elif year >= 2015:
+        return 1.0   # Streaming era baseline
+    elif year >= 2010:
+        return 0.3   # Pre-streaming, use cautiously
+    else:
+        return 0.1   # Historical reference only
+
 st.title("💰 Production Cost Estimator")
 
 st.markdown("Select attributes for your project to find comparable titles and estimate production costs.")
@@ -142,37 +160,95 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                                 st.caption(f"Budget: {format_currency(original)}")
                     st.divider()
 
-            # Calculate budget estimate from comparable titles
-            budgets = []
+            # Calculate budget estimate from comparable titles (weighted by similarity + recency)
+            weighted_data = []
             for c in comparables:
                 if c["title"].get("budget_raw"):
                     original = c["title"]["budget_raw"]
                     year_str = c["title"].get("release_date", "")[:4]
-                    if adjust_inflation and year_str.isdigit():
-                        budgets.append(adjust_for_inflation(original, int(year_str)))
-                    else:
-                        budgets.append(original)
+                    if year_str.isdigit():
+                        year = int(year_str)
+                        if adjust_inflation:
+                            budget = adjust_for_inflation(original, year)
+                        else:
+                            budget = original
+                        similarity = c["score"]
+                        recency = get_recency_multiplier(year)
+                        combined_weight = similarity * recency
+                        weighted_data.append({
+                            "title": c["title"].get("title", "Unknown"),
+                            "year": year,
+                            "budget": budget,
+                            "original_budget": original,
+                            "similarity": similarity,
+                            "recency": recency,
+                            "weight": combined_weight,
+                        })
 
-            if budgets:
-                avg_budget = sum(budgets) / len(budgets)
-                low_budget = min(budgets)
-                high_budget = max(budgets)
+            if weighted_data:
+                # Calculate weighted average
+                total_weight = sum(d["weight"] for d in weighted_data)
+                for d in weighted_data:
+                    d["contribution"] = (d["weight"] / total_weight) * d["budget"]
+
+                avg_budget = sum(d["contribution"] for d in weighted_data)
+                low_budget = min(d["budget"] for d in weighted_data)
+                high_budget = max(d["budget"] for d in weighted_data)
 
                 st.subheader("Estimated Budget Range")
                 if adjust_inflation:
-                    st.caption("📈 All budgets adjusted to 2024 dollars")
+                    st.caption("📈 Weighted by similarity + recency (budgets in 2024 dollars)")
+                else:
+                    st.caption("📈 Weighted by similarity + recency")
                 est_cols = st.columns(3)
                 with est_cols[0]:
                     st.metric("Low Estimate", format_currency(int(low_budget)),
                               help="Lowest budget among comparable titles")
                 with est_cols[1]:
                     st.metric("Base Estimate", format_currency(int(avg_budget)),
-                              help="Average budget of comparable titles")
+                              help="Weighted average (recent + similar titles count more)")
                 with est_cols[2]:
                     st.metric("High Estimate", format_currency(int(high_budget)),
                               help="Highest budget among comparable titles")
 
-                st.caption(f"📊 Based on {len(budgets)} comparable titles with budget data")
+                st.caption(f"📊 Based on {len(weighted_data)} comparable titles with budget data")
+
+                # Methodology expander
+                with st.expander("📊 How We Estimated This Budget"):
+                    st.markdown("""
+**Methodology:** Weighted average of comparable titles
+
+Each title's influence = `Similarity Score × Recency Multiplier`
+
+**Recency Multipliers** (industry cost structures change over time):
+- 2022-2024: **2.0x** (current market)
+- 2019-2021: **1.5x** (recent)
+- 2015-2018: **1.0x** (baseline)
+- 2010-2014: **0.3x** (dated)
+- Before 2010: **0.1x** (historical only)
+                    """)
+
+                    st.markdown("**Contribution Breakdown:**")
+
+                    # Sort by contribution (highest first)
+                    sorted_data = sorted(weighted_data, key=lambda x: x["contribution"], reverse=True)
+
+                    for d in sorted_data:
+                        col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 2])
+                        with col1:
+                            st.write(f"**{d['title']}** ({d['year']})")
+                        with col2:
+                            st.write(f"{d['similarity']:.0f}% sim")
+                        with col3:
+                            st.write(f"{d['recency']}x rec")
+                        with col4:
+                            st.write(format_currency(d['budget']))
+                        with col5:
+                            pct = (d['contribution'] / avg_budget) * 100
+                            st.write(f"→ {format_currency(int(d['contribution']))} ({pct:.0f}%)")
+
+                    st.divider()
+                    st.markdown(f"**Weighted Total: {format_currency(int(avg_budget))}**")
             else:
                 st.info("No budget data available for comparable titles.")
         else:
