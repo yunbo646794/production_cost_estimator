@@ -1,132 +1,146 @@
+#!/usr/bin/env python3
 """
-Script to populate the titles database with popular movies across genres and budgets.
-Run this once to seed the database for the Cost Estimator.
+Populate titles_db.json with movies from TMDb.
+
+Fetches popular movies with budget data for years 2015-2024.
+Uses the existing API infrastructure to get full details.
+
+Usage:
+    python scripts/populate_db.py
+
+Environment:
+    TMDB_API_KEY must be set in .env file
 """
+
 import os
 import sys
 import json
+import time
+from datetime import datetime
 
-# Add parent directory to path
+# Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
-from api import TMDbClient, get_merged_details
+from api.tmdb import TMDbClient
+from api.merged import get_merged_details
 
 load_dotenv()
 
-# Popular movies to seed the database (diverse genres, eras, budgets)
-SEED_MOVIES = [
-    # Blockbusters
-    ("The Dark Knight", 155),
-    ("Avatar", 19995),
-    ("Avengers: Endgame", 299534),
-    ("Titanic", 597),
-    ("Jurassic Park", 329),
-    ("The Lord of the Rings: The Return of the King", 122),
-    ("Star Wars: The Force Awakens", 140607),
-    ("Inception", 27205),
-    ("The Matrix", 603),
-    ("Gladiator", 98),
+# Configuration - adjust these for testing vs production
+START_YEAR = 2015       # 10 years of data
+END_YEAR = 2024
+MOVIES_PER_YEAR = 100   # Target ~1000 total titles
+MAX_PAGES_PER_YEAR = 10  # TMDb returns 20 results per page
+RATE_LIMIT_DELAY = 0.25  # Seconds between API calls to avoid rate limiting
+MIN_VOTE_COUNT = 20     # Lowered from 100 to include more indie films
 
-    # Mid-Budget
-    ("The Shawshank Redemption", 278),
-    ("Pulp Fiction", 680),
-    ("Fight Club", 550),
-    ("Forrest Gump", 13),
-    ("The Silence of the Lambs", 274),
-    ("Se7en", 807),
-    ("Goodfellas", 769),
-    ("The Departed", 1422),
-    ("No Country for Old Men", 6977),
-    ("There Will Be Blood", 7345),
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+OUTPUT_FILE = os.path.join(DATA_DIR, "titles_db.json")
 
-    # Horror/Thriller (typically lower budget)
-    ("Get Out", 419430),
-    ("A Quiet Place", 447332),
-    ("The Conjuring", 138843),
-    ("It", 346364),
-    ("Hereditary", 493559),
-    ("Parasite", 496243),
-    ("The Witch", 310131),
-    ("Midsommar", 530385),
 
-    # Comedy
-    ("The Hangover", 18785),
-    ("Bridesmaids", 65898),
-    ("Superbad", 8363),
-    ("Step Brothers", 12133),
+def discover_movies_by_year(client: TMDbClient, year: int, page: int = 1) -> list:
+    """
+    Discover popular movies from a specific year.
+    Uses TMDb discover endpoint with filters.
+    """
+    params = {
+        "sort_by": "popularity.desc",
+        "primary_release_year": year,
+        "page": page,
+        "vote_count.gte": MIN_VOTE_COUNT,  # Lowered to include more indie films
+        "with_original_language": "en",  # English language films (tend to have budget data)
+    }
+    data = client._get("/discover/movie", params)
+    return data.get("results", [])
 
-    # Drama/Indie
-    ("Moonlight", 376867),
-    ("Lady Bird", 391713),
-    ("The Florida Project", 399106),
-    ("Manchester by the Sea", 334541),
-    ("Whiplash", 244786),
-    ("Room", 264644),
 
-    # Sci-Fi
-    ("Interstellar", 157336),
-    ("Arrival", 329865),
-    ("Blade Runner 2049", 335984),
-    ("Ex Machina", 264660),
-    ("Dune", 438631),
+def main():
+    api_key = os.getenv("TMDB_API_KEY")
+    if not api_key:
+        print("ERROR: TMDB_API_KEY not found in environment")
+        sys.exit(1)
 
-    # Animation
-    ("Spider-Man: Into the Spider-Verse", 324857),
-    ("Toy Story", 862),
-    ("Finding Nemo", 12),
-    ("Coco", 354912),
-    ("The Lion King", 8587),
-]
+    client = TMDbClient(api_key)
 
-def populate_database():
-    tmdb_key = os.getenv("TMDB_API_KEY")
-    if not tmdb_key:
-        print("Error: TMDB_API_KEY not found in environment")
-        return
+    # Load existing database to preserve any manually added titles
+    existing_db = {"version": "1.0", "titles": []}
+    if os.path.exists(OUTPUT_FILE):
+        with open(OUTPUT_FILE, "r") as f:
+            existing_db = json.load(f)
 
-    tmdb = TMDbClient(tmdb_key)
+    # Track existing TMDb IDs to avoid duplicates
+    existing_ids = {t.get("tmdb_id") for t in existing_db.get("titles", [])}
+    print(f"Existing database has {len(existing_ids)} titles")
 
-    db_path = os.path.join(os.path.dirname(__file__), "..", "data", "titles_db.json")
+    all_titles = list(existing_db.get("titles", []))
+    new_count = 0
+    skipped_no_budget = 0
+    errors = 0
 
-    # Load existing database
-    try:
-        with open(db_path, "r") as f:
-            db = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        db = {"version": "1.0", "titles": []}
+    print(f"\nFetching movies from {START_YEAR} to {END_YEAR}...")
+    print("=" * 60)
 
-    existing_ids = [t.get("tmdb_id") for t in db["titles"]]
-    added = 0
-    skipped = 0
+    for year in range(START_YEAR, END_YEAR + 1):
+        year_titles = 0
+        print(f"\n{year}:", end=" ")
 
-    print(f"Starting with {len(existing_ids)} existing titles...")
+        for page in range(1, MAX_PAGES_PER_YEAR + 1):
+            if year_titles >= MOVIES_PER_YEAR:
+                break
 
-    for title, tmdb_id in SEED_MOVIES:
-        if tmdb_id in existing_ids:
-            print(f"  Skipping {title} (already in database)")
-            skipped += 1
-            continue
+            try:
+                movies = discover_movies_by_year(client, year, page)
+                if not movies:
+                    break
 
-        try:
-            data, errors = get_merged_details(tmdb, tmdb_id, "movie")
-            if data:
-                db["titles"].append(data)
-                existing_ids.append(tmdb_id)
-                added += 1
-                budget = data.get("budget", "N/A")
-                print(f"  Added: {title} - Budget: {budget}")
-            else:
-                print(f"  Failed to fetch: {title}")
-        except Exception as e:
-            print(f"  Error fetching {title}: {e}")
+                for movie in movies:
+                    if year_titles >= MOVIES_PER_YEAR:
+                        break
 
-    # Save database
-    with open(db_path, "w") as f:
-        json.dump(db, f, indent=2)
+                    tmdb_id = movie.get("id")
+                    if tmdb_id in existing_ids:
+                        continue
 
-    print(f"\nDone! Added {added} titles, skipped {skipped}.")
-    print(f"Total titles in database: {len(db['titles'])}")
+                    # Get full details
+                    time.sleep(RATE_LIMIT_DELAY)
+                    try:
+                        details, errs = get_merged_details(client, tmdb_id, "movie")
+                        if details and details.get("budget_raw") and details["budget_raw"] > 0:
+                            all_titles.append(details)
+                            existing_ids.add(tmdb_id)
+                            year_titles += 1
+                            new_count += 1
+                            print(".", end="", flush=True)
+                        else:
+                            skipped_no_budget += 1
+                    except Exception as e:
+                        errors += 1
+
+            except Exception as e:
+                print(f"\nError fetching page {page} for {year}: {e}")
+                errors += 1
+
+        print(f" ({year_titles} titles)")
+
+    # Save updated database
+    output_db = {
+        "version": "1.0",
+        "last_updated": datetime.now().isoformat(),
+        "titles": all_titles,
+    }
+
+    with open(OUTPUT_FILE, "w") as f:
+        json.dump(output_db, f, indent=2)
+
+    print("\n" + "=" * 60)
+    print(f"DONE!")
+    print(f"  New titles added: {new_count}")
+    print(f"  Skipped (no budget): {skipped_no_budget}")
+    print(f"  Errors: {errors}")
+    print(f"  Total titles in database: {len(all_titles)}")
+    print(f"  Saved to: {OUTPUT_FILE}")
+
 
 if __name__ == "__main__":
-    populate_database()
+    main()

@@ -1,5 +1,4 @@
 import os
-import json
 import streamlit as st
 from dotenv import load_dotenv
 from streamlit_searchbox import st_searchbox
@@ -9,14 +8,24 @@ load_dotenv()
 
 st.set_page_config(page_title="Title Search", page_icon="🔍", layout="wide")
 
+
+def get_secret(key: str, default: str = "") -> str:
+    """Get secret from st.secrets (Streamlit Cloud) or environment (local dev)."""
+    try:
+        return st.secrets[key]
+    except (KeyError, FileNotFoundError, AttributeError):
+        return os.getenv(key, default)
+
+
 st.title("🔍 Title Search")
+st.caption("Reference tool - search movie and TV show information from TMDb")
 
 # Sidebar - API Configuration
 with st.sidebar:
     st.header("API Key")
     tmdb_key = st.text_input(
         "TMDb API Key",
-        value=os.getenv("TMDB_API_KEY", ""),
+        value=get_secret("TMDB_API_KEY"),
         type="password",
         key="tmdb_key_search"
     )
@@ -45,30 +54,6 @@ def search_tmdb(query: str):
         return []
 
 
-def save_to_database(data: dict):
-    """Save title data to local database."""
-    db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "titles_db.json")
-
-    try:
-        with open(db_path, "r") as f:
-            db = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        db = {"version": "1.0", "titles": []}
-
-    # Check if already exists
-    existing_ids = [t.get("tmdb_id") for t in db["titles"]]
-    if data["tmdb_id"] in existing_ids:
-        return False, "Already in database"
-
-    # Add to database
-    db["titles"].append(data)
-
-    with open(db_path, "w") as f:
-        json.dump(db, f, indent=2)
-
-    return True, "Saved successfully"
-
-
 # Search with autocomplete dropdown
 selected = st_searchbox(
     search_tmdb,
@@ -92,16 +77,6 @@ if selected:
 
     if data:
         st.divider()
-
-        # Header section with Save button
-        header_col1, header_col2 = st.columns([4, 1])
-        with header_col2:
-            if st.button("💾 Save to DB", type="primary"):
-                success, message = save_to_database(data)
-                if success:
-                    st.success(message)
-                else:
-                    st.info(message)
 
         col1, col2 = st.columns([1, 3])
 
