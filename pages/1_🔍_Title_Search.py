@@ -50,10 +50,12 @@ with st.sidebar:
 
 def search_tmdb(query: str):
     """Search TMDb and return results for the searchbox dropdown."""
-    if not query or not tmdb_key:
+    # Get API key inside function to ensure it's available during callback
+    api_key = get_secret("TMDB_API_KEY")
+    if not query or not api_key:
         return []
     try:
-        tmdb = TMDbClient(tmdb_key)
+        tmdb = TMDbClient(api_key)
         results = tmdb.search_multi(query)
         options = []
         for item in results[:10]:
@@ -82,7 +84,8 @@ if selected:
     media_type = selected["media_type"]
 
     with st.spinner("Loading details..."):
-        tmdb = TMDbClient(tmdb_key)
+        api_key = get_secret("TMDB_API_KEY")
+        tmdb = TMDbClient(api_key)
         data, errors = get_merged_details(tmdb, tmdb_id, media_type)
 
     if errors:
