@@ -219,18 +219,64 @@ if selected:
 
         # Computed Attributes (for Cost Estimator)
         with st.expander("Computed Attributes", expanded=True):
-            attr_cols = st.columns(5)
-            with attr_cols[0]:
-                st.metric("Period", data.get("computed_period", "N/A"))
-            with attr_cols[1]:
-                st.metric("VFX", data.get("computed_vfx", "N/A"))
-            with attr_cols[2]:
-                st.metric("Action", data.get("computed_action", "N/A"))
-            with attr_cols[3]:
-                scale = data.get("computed_scale", "N/A")
-                st.metric("Scale", scale.split(" (")[0] if scale else "N/A")
-            with attr_cols[4]:
-                st.metric("Star Power", data.get("computed_star_power", "N/A"))
+            st.caption("Auto-detected attributes used for finding comparable titles in the Cost Estimator")
+
+            # Get raw data for explanations
+            budget_raw = data.get("budget_raw", 0)
+            genres = data.get("genres", [])
+            cast_names = [c["name"] for c in data.get("cast", [])][:3]
+
+            # Create styled attribute cards
+            attr_html = """
+            <style>
+            .attr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 10px 0; }
+            .attr-card { background: #f0f2f6; border-radius: 8px; padding: 12px; text-align: center; }
+            .attr-label { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+            .attr-value { font-size: 14px; font-weight: 600; color: #1e3a5f; }
+            .attr-reason { font-size: 10px; color: #888; margin-top: 4px; }
+            </style>
+            <div class="attr-grid">
+            """
+
+            # Period
+            period = data.get("computed_period", "N/A")
+            period_reason = "from plot keywords" if period != "Contemporary" else "default (modern setting)"
+            attr_html += f'<div class="attr-card"><div class="attr-label">Period</div><div class="attr-value">{period}</div><div class="attr-reason">{period_reason}</div></div>'
+
+            # VFX
+            vfx = data.get("computed_vfx", "N/A")
+            vfx_genres = [g for g in genres if g.lower() in ["science fiction", "fantasy", "animation", "action", "adventure"]]
+            vfx_reason = f"genres: {', '.join(vfx_genres[:2])}" if vfx_genres else "based on genre mix"
+            attr_html += f'<div class="attr-card"><div class="attr-label">VFX Level</div><div class="attr-value">{vfx}</div><div class="attr-reason">{vfx_reason}</div></div>'
+
+            # Action
+            action = data.get("computed_action", "N/A")
+            action_genres = [g for g in genres if g.lower() in ["action", "adventure", "war", "drama", "comedy"]]
+            action_reason = f"genre: {action_genres[0]}" if action_genres else "from crew data"
+            attr_html += f'<div class="attr-card"><div class="attr-label">Action</div><div class="attr-value">{action}</div><div class="attr-reason">{action_reason}</div></div>'
+
+            # Scale
+            scale = data.get("computed_scale", "N/A")
+            if budget_raw and budget_raw > 0:
+                if budget_raw >= 1_000_000:
+                    scale_reason = f"budget: ${budget_raw/1_000_000:.0f}M"
+                else:
+                    scale_reason = f"budget: ${budget_raw/1_000:.0f}K"
+            else:
+                scale_reason = "no budget data"
+            scale_short = scale.split(" (")[0] if "(" in scale else scale
+            attr_html += f'<div class="attr-card"><div class="attr-label">Scale</div><div class="attr-value">{scale_short}</div><div class="attr-reason">{scale_reason}</div></div>'
+
+            # Star Power
+            star = data.get("computed_star_power", "N/A")
+            if cast_names:
+                star_reason = f"cast: {cast_names[0]}"
+            else:
+                star_reason = "no cast data"
+            attr_html += f'<div class="attr-card"><div class="attr-label">Star Power</div><div class="attr-value">{star}</div><div class="attr-reason">{star_reason}</div></div>'
+
+            attr_html += "</div>"
+            st.markdown(attr_html, unsafe_allow_html=True)
 
 # Floating Feedback Bar
 FEEDBACK_BAR = """
