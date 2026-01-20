@@ -1,5 +1,3 @@
-import os
-import json
 import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
@@ -42,20 +40,6 @@ Use the sidebar to navigate between pages:
 - **Cost Estimator** - Enter show attributes to find comparables and estimate production costs
 
 """)
-
-# Load database stats
-db_path = os.path.join(os.path.dirname(__file__), "data", "titles_db.json")
-try:
-    with open(db_path, "r") as f:
-        db = json.load(f)
-    title_count = len(db.get("titles", []))
-except (FileNotFoundError, json.JSONDecodeError):
-    title_count = 0
-
-if title_count > 0:
-    st.info(f"📊 **Database Status:** {title_count} titles saved")
-else:
-    st.warning("📊 **Database Status:** No titles saved yet. Use Title Search to build your database!")
 
 st.markdown("""
 ---
