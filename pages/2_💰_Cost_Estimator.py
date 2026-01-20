@@ -51,14 +51,8 @@ st.markdown("Select attributes for your project to find comparable titles and es
 
 # Sidebar - must be defined before main content uses the toggle
 with st.sidebar:
-    st.header("Settings")
-    adjust_inflation = st.toggle("Adjust for inflation", value=True,
+    adjust_inflation = st.toggle("⚙️ Adjust for inflation", value=True,
                                   help="Convert all budgets to 2024 dollars")
-
-    st.divider()
-
-    st.header("Database Stats")
-    # Will be populated after load_titles_db is defined
 
 # Load reference data - use absolute path
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
@@ -271,12 +265,9 @@ Each title's influence = `Similarity Score × Recency Multiplier`
     else:
         st.error("No titles in database! Go to Title Search and save some titles first.")
 
-# Update sidebar with database stats
+# Update sidebar with attribution
 with st.sidebar:
-    db = load_titles_db()
-    st.metric("Titles Saved", len(db.get("titles", [])))
-    st.divider()
-    st.caption("Build your database by saving titles from the Title Search page.")
+    st.caption("Data from [TMDb](https://www.themoviedb.org)")
 
 # Floating Feedback Bar
 FEEDBACK_BAR = """

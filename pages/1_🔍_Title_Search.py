@@ -34,17 +34,8 @@ def get_secret(key: str, default: str = "") -> str:
 st.title("🔍 Title Search")
 st.caption("Reference tool - search movie and TV show information from TMDb")
 
-# Sidebar - API Configuration
+# Sidebar
 with st.sidebar:
-    st.header("API Key")
-    tmdb_key = st.text_input(
-        "TMDb API Key",
-        value=get_secret("TMDB_API_KEY"),
-        type="password",
-        key="tmdb_key_search"
-    )
-    st.markdown("[Get free API key](https://www.themoviedb.org/settings/api)")
-    st.divider()
     st.caption("Data from [TMDb](https://www.themoviedb.org)")
 
 

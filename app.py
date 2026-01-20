@@ -43,14 +43,18 @@ Use the sidebar to navigate between pages:
 
 """)
 
-# Show database stats
+# Load database stats
 db_path = os.path.join(os.path.dirname(__file__), "data", "titles_db.json")
 try:
     with open(db_path, "r") as f:
         db = json.load(f)
     title_count = len(db.get("titles", []))
-    st.info(f"📊 **Database Status:** {title_count} titles saved")
 except (FileNotFoundError, json.JSONDecodeError):
+    title_count = 0
+
+if title_count > 0:
+    st.info(f"📊 **Database Status:** {title_count} titles saved")
+else:
     st.warning("📊 **Database Status:** No titles saved yet. Use Title Search to build your database!")
 
 st.markdown("""
@@ -67,15 +71,6 @@ st.markdown("""
 
 # Sidebar
 with st.sidebar:
-    st.header("API Key")
-    tmdb_key = st.text_input(
-        "TMDb API Key",
-        value=os.getenv("TMDB_API_KEY", ""),
-        type="password",
-        key="tmdb_key_home"
-    )
-    st.markdown("[Get free API key](https://www.themoviedb.org/settings/api)")
-    st.divider()
     st.caption("Data from [TMDb](https://www.themoviedb.org)")
 
 # Floating Feedback Bar
