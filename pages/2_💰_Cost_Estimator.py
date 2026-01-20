@@ -276,7 +276,47 @@ with st.sidebar:
     db = load_titles_db()
     st.metric("Titles Saved", len(db.get("titles", [])))
     st.divider()
-    st.markdown("### Help Us Improve")
-    st.link_button("📝 Give Feedback", "https://docs.google.com/forms/d/e/1FAIpQLSeD9j4-d0kVdt_UhT0etGqislY-Ue79PllVf9-akGLRu0r--A/viewform")
-    st.divider()
     st.caption("Build your database by saving titles from the Title Search page.")
+
+# Floating Feedback Bar
+FEEDBACK_BAR = """
+<style>
+.feedback-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    z-index: 9999;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+.feedback-bar p {
+    color: white;
+    margin: 0;
+    font-size: 14px;
+}
+.feedback-bar a {
+    background: #ff6b6b;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+.feedback-bar a:hover {
+    background: #ff5252;
+}
+</style>
+<div class="feedback-bar">
+    <p>💡 Help us improve this tool!</p>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeD9j4-d0kVdt_UhT0etGqislY-Ue79PllVf9-akGLRu0r--A/viewform" target="_blank">Give Feedback</a>
+</div>
+"""
+st.markdown(FEEDBACK_BAR, unsafe_allow_html=True)
