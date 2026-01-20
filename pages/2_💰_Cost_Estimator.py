@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import streamlit as st
+import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
 # Add parent directory to path for imports
@@ -12,6 +13,19 @@ from estimator import adjust_for_inflation, format_currency
 load_dotenv()
 
 st.set_page_config(page_title="Cost Estimator", page_icon="💰", layout="wide")
+
+# Google Analytics
+GA_TRACKING_CODE = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7J88HTR1H2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7J88HTR1H2');
+</script>
+"""
+components.html(GA_TRACKING_CODE, height=0)
 
 
 def get_recency_multiplier(year: int) -> float:
@@ -261,5 +275,8 @@ Each title's influence = `Similarity Score × Recency Multiplier`
 with st.sidebar:
     db = load_titles_db()
     st.metric("Titles Saved", len(db.get("titles", [])))
+    st.divider()
+    st.markdown("### Help Us Improve")
+    st.link_button("📝 Give Feedback", "https://docs.google.com/forms/d/e/1FAIpQLSeD9j4-d0kVdt_UhT0etGqislY-Ue79PllVf9-akGLRu0r--A/viewform")
     st.divider()
     st.caption("Build your database by saving titles from the Title Search page.")

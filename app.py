@@ -1,6 +1,7 @@
 import os
 import json
 import streamlit as st
+import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,6 +11,19 @@ st.set_page_config(
     page_icon="🎬",
     layout="wide"
 )
+
+# Google Analytics
+GA_TRACKING_CODE = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7J88HTR1H2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7J88HTR1H2');
+</script>
+"""
+components.html(GA_TRACKING_CODE, height=0)
 
 st.title("🎬 Production Cost Estimator")
 
@@ -61,5 +75,8 @@ with st.sidebar:
         key="tmdb_key_home"
     )
     st.markdown("[Get free API key](https://www.themoviedb.org/settings/api)")
+    st.divider()
+    st.markdown("### Help Us Improve")
+    st.link_button("📝 Give Feedback", "https://docs.google.com/forms/d/e/1FAIpQLSeD9j4-d0kVdt_UhT0etGqislY-Ue79PllVf9-akGLRu0r--A/viewform")
     st.divider()
     st.caption("Data from [TMDb](https://www.themoviedb.org)")
