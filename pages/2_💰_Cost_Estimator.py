@@ -139,6 +139,8 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
             "action": action,
             "period": period,
             "star_power": star_power,
+            "country": country,
+            "runtime": runtime,
         }
 
         # Find comparable titles
@@ -165,7 +167,8 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                         else:
                             st.markdown(f"**{title.get('title', 'Unknown')}** ({year_str})")
                         if reasons:
-                            st.caption(f"**Why similar:** {', '.join(reasons)}")
+                            tags = " ".join(f"`{r}`" for r in reasons)
+                            st.markdown(f"**Why similar:** {tags}", help="Attributes matching your project")
                         else:
                             st.caption(f"{', '.join(title.get('genres', [])[:3])}")
                     with tcol3:
@@ -213,59 +216,83 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                 high_budget = max(d["budget"] for d in weighted_data)
 
                 st.subheader("Estimated Budget Range")
-                st.caption("📈 Weighted by similarity + recency (all budgets in 2024 dollars)")
-                est_cols = st.columns(3)
-                with est_cols[0]:
-                    st.metric("Low Estimate", format_currency(int(low_budget)),
-                              help="Lowest budget among comparable titles")
-                with est_cols[1]:
-                    st.metric("Base Estimate", format_currency(int(avg_budget)),
-                              help="Weighted average (recent + similar titles count more)")
-                with est_cols[2]:
-                    st.metric("High Estimate", format_currency(int(high_budget)),
-                              help="Highest budget among comparable titles")
+                st.caption("All budgets adjusted to 2024 dollars | Weighted by similarity + recency")
 
-                st.caption(f"📊 Based on {len(weighted_data)} comparable titles with budget data")
+                # --- Visual Budget Range Bar ---
+                range_html = f"""
+                <div style="background: #1e1e2f; border-radius: 12px; padding: 24px; margin: 10px 0 20px 0; border: 1px solid rgba(212,175,55,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 12px; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px;">Low</div>
+                            <div style="font-size: 24px; font-weight: 700; color: #63b3ed;">{format_currency(int(low_budget))}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 12px; color: #d4af37; text-transform: uppercase; letter-spacing: 1px;">Base Estimate</div>
+                            <div style="font-size: 36px; font-weight: 700; color: #d4af37;">{format_currency(int(avg_budget))}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 12px; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px;">High</div>
+                            <div style="font-size: 24px; font-weight: 700; color: #fc8181;">{format_currency(int(high_budget))}</div>
+                        </div>
+                    </div>
+                    <div style="position: relative; height: 12px; background: linear-gradient(90deg, #63b3ed 0%, #d4af37 50%, #fc8181 100%); border-radius: 6px; margin: 0 10px;">
+                        <div style="position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; background: #d4af37; border-radius: 50%; border: 3px solid #1e1e2f;"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 12px;">
+                        <span style="font-size: 12px; color: #718096;">Based on {len(weighted_data)} comparable titles</span>
+                    </div>
+                </div>
+                """
+                st.markdown(range_html, unsafe_allow_html=True)
 
-                # Methodology expander
-                with st.expander("📊 How We Estimated This Budget"):
+                # --- Budget Contribution Chart ---
+                sorted_data = sorted(weighted_data, key=lambda x: x["contribution"], reverse=True)
+                max_contribution = max(d["contribution"] for d in sorted_data)
+
+                with st.expander("📊 Contribution Breakdown", expanded=True):
+                    for d in sorted_data:
+                        pct = (d["contribution"] / avg_budget) * 100
+                        bar_width = (d["contribution"] / max_contribution) * 100
+
+                        bar_html = f"""
+                        <div style="margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-weight: 600; font-size: 14px;">{d['title']} <span style="color: #718096; font-weight: 400;">({d['year']})</span></span>
+                                <span style="font-weight: 600; font-size: 14px;">{format_currency(int(d['contribution']))} <span style="color: #718096; font-weight: 400;">({pct:.0f}%)</span></span>
+                            </div>
+                            <div style="background: #2d3748; border-radius: 4px; height: 24px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #d4af37, #b8960c); width: {bar_width}%; height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px;">
+                                    <span style="font-size: 11px; color: #1a1a2e; font-weight: 600;">{d['similarity']:.0f}% sim · {d['recency']}x rec · {format_currency(d['budget'])}</span>
+                                </div>
+                            </div>
+                        </div>
+                        """
+                        st.markdown(bar_html, unsafe_allow_html=True)
+
+                    st.markdown(f"""
+                    <div style="text-align: right; padding-top: 8px; border-top: 1px solid #2d3748; margin-top: 8px;">
+                        <span style="font-weight: 700; font-size: 16px;">Weighted Total: {format_currency(int(avg_budget))}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                # --- Methodology ---
+                with st.expander("📋 Methodology"):
                     st.markdown("""
-**Methodology:** Weighted average of comparable titles from the **last 6 years**
+**How it works:** Weighted average of comparable titles from the **last 6 years**
 
 Each title's influence = `Similarity Score × Recency Multiplier`
 
-**Why 6 years?** Industry standard - producers typically use recent comps for pitch decks.
+| Recency | Multiplier | Rationale |
+|---------|-----------|-----------|
+| 0-1 years | **2.0x** | Most relevant to current costs |
+| 2 years | **1.7x** | Recent market conditions |
+| 3 years | **1.4x** | Moderately relevant |
+| 4 years | **1.1x** | Baseline |
+| 5 years | **0.9x** | Slightly outdated |
+| 6 years | **0.7x** | Edge of relevance window |
 
-**Recency Multipliers** (newer = more relevant to current costs):
-- 0-1 years old: **2.0x** (most relevant)
-- 2 years old: **1.7x**
-- 3 years old: **1.4x**
-- 4 years old: **1.1x**
-- 5 years old: **0.9x**
-- 6 years old: **0.7x**
+**Why 6 years?** Industry standard — producers typically use recent comps for pitch decks.
                     """)
-
-                    st.markdown("**Contribution Breakdown:**")
-
-                    # Sort by contribution (highest first)
-                    sorted_data = sorted(weighted_data, key=lambda x: x["contribution"], reverse=True)
-
-                    for d in sorted_data:
-                        col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 2])
-                        with col1:
-                            st.write(f"**{d['title']}** ({d['year']})")
-                        with col2:
-                            st.write(f"{d['similarity']:.0f}% sim")
-                        with col3:
-                            st.write(f"{d['recency']}x rec")
-                        with col4:
-                            st.write(format_currency(d['budget']))
-                        with col5:
-                            pct = (d['contribution'] / avg_budget) * 100
-                            st.write(f"→ {format_currency(int(d['contribution']))} ({pct:.0f}%)")
-
-                    st.divider()
-                    st.markdown(f"**Weighted Total: {format_currency(int(avg_budget))}**")
             else:
                 st.info("No budget data available for comparable titles.")
         else:
