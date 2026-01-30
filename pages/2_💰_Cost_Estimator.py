@@ -32,18 +32,25 @@ def get_recency_multiplier(year: int) -> float:
     """Get recency weight based on release year.
 
     Recent films are more relevant to current production costs.
-    Industry cost structure has changed significantly over time.
+    Note: Comp titles are already filtered to last 6 years.
     """
-    if year >= 2022:
-        return 2.0   # Post-COVID, current market
-    elif year >= 2019:
-        return 1.5   # COVID era, still relevant
-    elif year >= 2015:
-        return 1.0   # Streaming era baseline
-    elif year >= 2010:
-        return 0.3   # Pre-streaming, use cautiously
+    from datetime import datetime
+    current_year = datetime.now().year
+
+    years_old = current_year - year
+
+    if years_old <= 1:
+        return 2.0   # This year or last year - most relevant
+    elif years_old <= 2:
+        return 1.7   # 2 years old
+    elif years_old <= 3:
+        return 1.4   # 3 years old
+    elif years_old <= 4:
+        return 1.1   # 4 years old
+    elif years_old <= 5:
+        return 0.9   # 5 years old
     else:
-        return 0.1   # Historical reference only
+        return 0.7   # 6 years old (edge of window)
 
 st.title("💰 Production Cost Estimator")
 
@@ -152,7 +159,11 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                             st.image(title["poster_url"], width=80)
                     with tcol2:
                         year_str = title.get("release_date", "")[:4] if title.get("release_date") else "N/A"
-                        st.markdown(f"**{title.get('title', 'Unknown')}** ({year_str})")
+                        tmdb_link = title.get("tmdb_url", "")
+                        if tmdb_link:
+                            st.markdown(f"**[{title.get('title', 'Unknown')}]({tmdb_link})** ({year_str})")
+                        else:
+                            st.markdown(f"**{title.get('title', 'Unknown')}** ({year_str})")
                         if reasons:
                             st.caption(f"**Why similar:** {', '.join(reasons)}")
                         else:
@@ -169,6 +180,7 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                     st.divider()
 
             # Calculate budget estimate from comparable titles (weighted by similarity + recency)
+            # Always use 2024-adjusted dollars for the final estimate
             weighted_data = []
             for c in comparables:
                 if c["title"].get("budget_raw"):
@@ -176,10 +188,7 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                     year_str = c["title"].get("release_date", "")[:4]
                     if year_str.isdigit():
                         year = int(year_str)
-                        if adjust_inflation:
-                            budget = adjust_for_inflation(original, year)
-                        else:
-                            budget = original
+                        budget = adjust_for_inflation(original, year)
                         similarity = c["score"]
                         recency = get_recency_multiplier(year)
                         combined_weight = similarity * recency
@@ -204,10 +213,7 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                 high_budget = max(d["budget"] for d in weighted_data)
 
                 st.subheader("Estimated Budget Range")
-                if adjust_inflation:
-                    st.caption("📈 Weighted by similarity + recency (budgets in 2024 dollars)")
-                else:
-                    st.caption("📈 Weighted by similarity + recency")
+                st.caption("📈 Weighted by similarity + recency (all budgets in 2024 dollars)")
                 est_cols = st.columns(3)
                 with est_cols[0]:
                     st.metric("Low Estimate", format_currency(int(low_budget)),
@@ -224,16 +230,19 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                 # Methodology expander
                 with st.expander("📊 How We Estimated This Budget"):
                     st.markdown("""
-**Methodology:** Weighted average of comparable titles
+**Methodology:** Weighted average of comparable titles from the **last 6 years**
 
 Each title's influence = `Similarity Score × Recency Multiplier`
 
-**Recency Multipliers** (industry cost structures change over time):
-- 2022-2024: **2.0x** (current market)
-- 2019-2021: **1.5x** (recent)
-- 2015-2018: **1.0x** (baseline)
-- 2010-2014: **0.3x** (dated)
-- Before 2010: **0.1x** (historical only)
+**Why 6 years?** Industry standard - producers typically use recent comps for pitch decks.
+
+**Recency Multipliers** (newer = more relevant to current costs):
+- 0-1 years old: **2.0x** (most relevant)
+- 2 years old: **1.7x**
+- 3 years old: **1.4x**
+- 4 years old: **1.1x**
+- 5 years old: **0.9x**
+- 6 years old: **0.7x**
                     """)
 
                     st.markdown("**Contribution Breakdown:**")

@@ -93,7 +93,11 @@ if selected:
                 st.image(data["poster_url"], width=250)
 
         with col2:
-            st.header(data["title"])
+            tmdb_link = data.get("tmdb_url", "")
+            if tmdb_link:
+                st.markdown(f"# [{data['title']}]({tmdb_link})")
+            else:
+                st.header(data["title"])
             if data["original_title"] and data["original_title"] != data["title"]:
                 st.caption(f"Original: {data['original_title']}")
 
@@ -164,7 +168,7 @@ if selected:
                 if source_links:
                     st.caption(f"📊 Data sources: {' | '.join(source_links)}")
             else:
-                st.info("No budget or revenue information found in TMDb or Wikipedia.")
+                st.info("💡 Budget/revenue data not found in Wikipedia or TMDb.")
 
         # Crew section
         with st.expander("Crew"):

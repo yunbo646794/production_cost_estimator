@@ -29,7 +29,7 @@ class TMDbClient:
         """Make a GET request to TMDb API."""
         params = params or {}
         params["api_key"] = self.api_key
-        response = requests.get(f"{self.BASE_URL}{endpoint}", params=params)
+        response = requests.get(f"{self.BASE_URL}{endpoint}", params=params, timeout=30)
         response.raise_for_status()
         return response.json()
 

@@ -68,10 +68,14 @@ def get_merged_details(
     tmdb_client: TMDbClient,
     tmdb_id: int,
     media_type: str,
+    skip_wikipedia: bool = False,
 ) -> tuple[dict, list]:
     """
     Fetch movie/TV details from TMDb.
     Returns (data, errors) tuple.
+
+    Args:
+        skip_wikipedia: If True, skip Wikipedia fallback for faster processing.
     """
     errors = []
     tmdb_data = None
@@ -112,8 +116,8 @@ def get_merged_details(
     if budget:
         budget_source_url = tmdb_url
 
-    # Fallback to Wikipedia if TMDb budget is missing
-    if is_movie and not budget:
+    # Fallback to Wikipedia if TMDb budget is missing (unless skipped)
+    if is_movie and not budget and not skip_wikipedia:
         try:
             wiki_data = get_budget_from_wikipedia(title, year)
             if wiki_data.get("budget_raw"):

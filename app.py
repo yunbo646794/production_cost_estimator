@@ -44,12 +44,12 @@ HEAD_CONTENT = """
 """
 components.html(HEAD_CONTENT, height=0)
 
-# Professional Home Page Styling
+# Professional Home Page Styling - Dark Theater Theme
 HOME_STYLES = """
 <style>
-/* Fix Streamlit dark background - apply light background to entire page */
+/* Dark Theater background */
 .stApp, .main, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
-    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
+    background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%) !important;
 }
 
 /* Hide default Streamlit header spacing */
@@ -68,19 +68,20 @@ HOME_STYLES = """
 .hero-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #1e3a5f !important;
+    color: #d4af37 !important;
     margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .hero-subtitle {
     font-size: 1.15rem;
-    color: #4a5568 !important;
+    color: #e2e8f0 !important;
     margin-bottom: 0.75rem;
 }
 
 .hero-author {
     font-size: 0.95rem;
-    color: #718096 !important;
+    color: #a0aec0 !important;
     margin: 0;
 }
 
@@ -257,19 +258,19 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown(f'''
-<div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
-<div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #2d5a87, #1e3a5f); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+<div style="background: linear-gradient(145deg, #1e1e2f, #2a2a40); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2);">
+<div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #b8960c); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">
 <img src="{SEARCH_ICON_URI}" style="width: 36px; height: 36px;">
 </div>
-<div style="font-size: 1.5rem; font-weight: 600; color: #2d3748; text-align: center; margin-bottom: 0.5rem;">Title Search</div>
-<p style="color: #718096; text-align: center; margin-bottom: 1.25rem; font-size: 0.95rem;">Research any title in seconds — not hours.</p>
+<div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; text-align: center; margin-bottom: 0.5rem;">Title Search</div>
+<p style="color: #a0aec0; text-align: center; margin-bottom: 1.25rem; font-size: 0.95rem;">Research any title in seconds — not hours.</p>
 <div style="margin-bottom: 1rem;">
-<div style="font-size: 0.8rem; font-weight: 600; color: #1e3a5f; text-transform: uppercase; margin-bottom: 0.5rem;">Features</div>
-<div style="color: #4a5568; font-size: 0.9rem;">✓ Budget & box office data<br>✓ Revenue, profit & ROI<br>✓ Cast & crew credits<br>✓ Production attributes</div>
+<div style="font-size: 0.8rem; font-weight: 600; color: #d4af37; text-transform: uppercase; margin-bottom: 0.5rem;">Features</div>
+<div style="color: #e2e8f0; font-size: 0.9rem;">✓ Budget & box office data<br>✓ Revenue, profit & ROI<br>✓ Cast & crew credits<br>✓ Production attributes</div>
 </div>
 <div style="margin-bottom: 1rem;">
-<div style="font-size: 0.8rem; font-weight: 600; color: #1e3a5f; text-transform: uppercase; margin-bottom: 0.5rem;">How It Works</div>
-<div style="color: #4a5568; font-size: 0.9rem;">Search by title → Instant budget, revenue & credits.</div>
+<div style="font-size: 0.8rem; font-weight: 600; color: #d4af37; text-transform: uppercase; margin-bottom: 0.5rem;">How It Works</div>
+<div style="color: #e2e8f0; font-size: 0.9rem;">Search by title → Instant budget, revenue & credits.</div>
 </div>
 </div>
 ''', unsafe_allow_html=True)
@@ -278,19 +279,19 @@ with col1:
 
 with col2:
     st.markdown(f'''
-<div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
-<div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #38a169, #276749); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+<div style="background: linear-gradient(145deg, #1e1e2f, #2a2a40); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2);">
+<div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #b8960c); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">
 <img src="{DOLLAR_ICON_URI}" style="width: 36px; height: 36px;">
 </div>
-<div style="font-size: 1.5rem; font-weight: 600; color: #2d3748; text-align: center; margin-bottom: 0.5rem;">Cost Estimator</div>
-<p style="color: #718096; text-align: center; margin-bottom: 1.25rem; font-size: 0.95rem;">Find comp titles in minutes — not days.</p>
+<div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; text-align: center; margin-bottom: 0.5rem;">Cost Estimator</div>
+<p style="color: #a0aec0; text-align: center; margin-bottom: 1.25rem; font-size: 0.95rem;">Find comp titles in minutes — not days.</p>
 <div style="margin-bottom: 1rem;">
-<div style="font-size: 0.8rem; font-weight: 600; color: #1e3a5f; text-transform: uppercase; margin-bottom: 0.5rem;">Features</div>
-<div style="color: #4a5568; font-size: 0.9rem;">✓ Define 10 project attributes<br>✓ Auto-match similar productions<br>✓ Get budget range estimates<br>✓ Inflation-adjusted to 2024</div>
+<div style="font-size: 0.8rem; font-weight: 600; color: #d4af37; text-transform: uppercase; margin-bottom: 0.5rem;">Features</div>
+<div style="color: #e2e8f0; font-size: 0.9rem;">✓ Define 10 project attributes<br>✓ Auto-match similar productions<br>✓ Get budget range estimates<br>✓ Inflation-adjusted to 2024</div>
 </div>
 <div style="margin-bottom: 1rem;">
-<div style="font-size: 0.8rem; font-weight: 600; color: #1e3a5f; text-transform: uppercase; margin-bottom: 0.5rem;">How It Works</div>
-<div style="color: #4a5568; font-size: 0.9rem;">Set your project's genre, cast tier, VFX level → Get comparable titles with real budget data.</div>
+<div style="font-size: 0.8rem; font-weight: 600; color: #d4af37; text-transform: uppercase; margin-bottom: 0.5rem;">How It Works</div>
+<div style="color: #e2e8f0; font-size: 0.9rem;">Set your project's genre, cast tier, VFX level → Get comparable titles with real budget data.</div>
 </div>
 </div>
 ''', unsafe_allow_html=True)
@@ -309,32 +310,33 @@ FEEDBACK_BAR = """
     bottom: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+    background: linear-gradient(90deg, #1a1a2e 0%, #16213e 100%);
     padding: 12px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
     z-index: 9999;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(212,175,55,0.3);
 }
 .feedback-bar p {
-    color: white;
+    color: #e2e8f0;
     margin: 0;
     font-size: 14px;
 }
 .feedback-bar a {
-    background: #ff6b6b;
-    color: white;
+    background: linear-gradient(135deg, #d4af37, #b8960c);
+    color: #1a1a2e;
     padding: 8px 20px;
     border-radius: 20px;
     text-decoration: none;
     font-weight: bold;
     font-size: 14px;
-    transition: background 0.3s;
+    transition: all 0.3s;
 }
 .feedback-bar a:hover {
-    background: #ff5252;
+    box-shadow: 0 0 15px rgba(212,175,55,0.5);
 }
 </style>
 <div class="feedback-bar">

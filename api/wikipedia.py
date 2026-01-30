@@ -19,7 +19,7 @@ def search_wikipedia(title: str, year: str = None) -> str | None:
         "srlimit": 5
     }
 
-    response = requests.get("https://en.wikipedia.org/w/api.php", params=params, headers=HEADERS)
+    response = requests.get("https://en.wikipedia.org/w/api.php", params=params, headers=HEADERS, timeout=10)
     data = response.json()
 
     results = data.get("query", {}).get("search", [])
@@ -50,7 +50,7 @@ def get_budget_from_wikipedia(title: str, year: str = None) -> dict:
 
         # Fetch the page content
         url = f"https://en.wikipedia.org/wiki/{page_title.replace(' ', '_')}"
-        response = requests.get(url, headers=HEADERS)
+        response = requests.get(url, headers=HEADERS, timeout=10)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
