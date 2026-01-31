@@ -200,32 +200,30 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
     Compute similarity score between user-selected attributes and a database title.
     Returns (score 0-100, list of matching reasons).
 
-    Uses baseline + bonus/penalty system for meaningful score differentiation:
-    - Start at 50 (neutral baseline)
-    - Matches add points (+bonus)
-    - Mismatches subtract points (-penalty)
-    - 8 scoring dimensions for wide spread
+    Uses percentage-based scoring where each attribute contributes weighted points
+    toward a maximum. Score = (earned / max) * 100 for full 0-100 range usage.
+    Scale is excluded since filter_by_scale() already enforces it as a hard filter.
     """
-    score = 50  # Neutral baseline
+    earned = 0.0
     reasons = []
 
-    # Attribute weights: (bonus for match, penalty for mismatch)
+    # Weights per attribute (total max = 96, recency bonus can push to 100)
     weights = {
-        "genre":      {"bonus": 12, "penalty": -10},
-        "scale":      {"bonus": 10, "penalty": -8},
-        "vfx":        {"bonus": 6,  "penalty": -5},
-        "action":     {"bonus": 6,  "penalty": -5},
-        "period":     {"bonus": 6,  "penalty": -5},
-        "star_power": {"bonus": 4,  "penalty": -3},
-        "country":    {"bonus": 4,  "penalty": -3},
-        "runtime":    {"bonus": 4,  "penalty": -3},
+        "genre": 25,
+        "vfx": 15,
+        "action": 12,
+        "period": 12,
+        "star_power": 12,
+        "country": 10,
+        "runtime": 10,
     }
+    max_points = sum(weights.values())  # 96
 
     # --- Genre matching ---
     user_genre = user_attrs.get("genre", "")
     title_genres = title.get("genres", [])
     if matches_genre(user_genre, title_genres):
-        score += weights["genre"]["bonus"]
+        earned += weights["genre"]
         if title_genres:
             reasons.append(f"Genre: {title_genres[0]}")
     elif title_genres:
@@ -240,25 +238,9 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
             related = True
 
         if related:
-            score += weights["genre"]["bonus"] * 0.3
+            earned += weights["genre"] * 0.3
             reasons.append(f"Genre: ~{title_genres[0]}")
-        else:
-            score += weights["genre"]["penalty"]
-    else:
-        score += weights["genre"]["penalty"]
-
-    # --- Scale matching ---
-    scale_score = match_scale(user_attrs.get("scale", ""), title.get("computed_scale", ""))
-    if scale_score == 100:
-        score += weights["scale"]["bonus"]
-        scale_display = title.get("computed_scale", "N/A").split(" (")[0]
-        reasons.append(f"Scale: {scale_display}")
-    elif scale_score == 50:
-        score += weights["scale"]["bonus"] * 0.3
-        scale_display = title.get("computed_scale", "N/A").split(" (")[0]
-        reasons.append(f"Scale: ~{scale_display}")
-    else:
-        score += weights["scale"]["penalty"]
+        # else: mismatch, 0 points
 
     # --- Distance-based attributes (vfx, action, period, star_power) ---
     attr_map = {
@@ -275,18 +257,17 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
         if user_val and title_val:
             dist = get_distance_score(attr, user_val, title_val)
             if dist == 1.0:
-                score += weights[attr]["bonus"]
+                earned += weights[attr]
                 reasons.append(f"{attr.replace('_', ' ').title()}: {title_val}")
-            elif dist >= 0.6:
-                score += weights[attr]["bonus"] * 0.4
+            elif dist >= 0.5:
+                # Adjacent (1 step away): 60% credit
+                earned += weights[attr] * 0.6
                 reasons.append(f"{attr.replace('_', ' ').title()}: ~{title_val}")
             elif dist >= 0.3:
-                score += weights[attr]["penalty"] * 0.4
-            else:
-                score += weights[attr]["penalty"]
-        else:
-            # No data - small penalty
-            score += weights[attr]["penalty"] * 0.3
+                # 2 steps away: 25% credit
+                earned += weights[attr] * 0.25
+            # else: mismatch or far, 0 points
+        # else: no data, 0 points
 
     # --- Country matching ---
     user_country = user_attrs.get("country", "")
@@ -294,13 +275,11 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
     if user_country:
         country_score = match_country(user_country, title_countries)
         if country_score == 1.0:
-            score += weights["country"]["bonus"]
+            earned += weights["country"]
             if title_countries:
                 reasons.append(f"Country: {title_countries[0]}")
         elif country_score >= 0.3:
-            score += weights["country"]["bonus"] * 0.3
-        else:
-            score += weights["country"]["penalty"]
+            earned += weights["country"] * 0.6
 
     # --- Runtime matching ---
     user_runtime = user_attrs.get("runtime", "")
@@ -308,12 +287,13 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
     if user_runtime:
         runtime_score = match_runtime(user_runtime, title_runtime)
         if runtime_score == 1.0:
-            score += weights["runtime"]["bonus"]
+            earned += weights["runtime"]
             reasons.append(f"Runtime: {title_runtime}min")
         elif runtime_score >= 0.5:
-            score += weights["runtime"]["bonus"] * 0.3
-        else:
-            score += weights["runtime"]["penalty"]
+            earned += weights["runtime"] * 0.6
+
+    # Compute percentage score
+    score = (earned / max_points) * 100
 
     # --- Recency bonus (up to 4 extra points) ---
     release_date = title.get("release_date", "")
@@ -333,7 +313,7 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
             pass
 
     # Clamp to 0-100
-    score = max(0, min(100, score))
+    score = max(0, min(100, round(score, 1)))
 
     return score, reasons
 
