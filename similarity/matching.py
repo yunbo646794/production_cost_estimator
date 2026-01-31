@@ -313,7 +313,7 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
             pass
 
     # Clamp to 0-100
-    score = max(0, min(100, round(score, 1)))
+    score = max(0, min(100, round(score)))
 
     return score, reasons
 
