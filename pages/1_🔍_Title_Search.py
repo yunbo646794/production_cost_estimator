@@ -34,9 +34,29 @@ def get_secret(key: str, default: str = "") -> str:
 st.title("🔍 Title Search")
 st.caption("Reference tool - search movie and TV show information from TMDb")
 
+# Initialize comparison list in session state
+if "compare_titles" not in st.session_state:
+    st.session_state.compare_titles = []
+
 # Sidebar
 with st.sidebar:
     st.caption("Data from [TMDb](https://www.themoviedb.org)")
+
+    # Comparison controls in sidebar
+    if st.session_state.compare_titles:
+        st.divider()
+        st.subheader(f"Compare ({len(st.session_state.compare_titles)}/5)")
+        for i, t in enumerate(st.session_state.compare_titles):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.caption(t.get("title", "Unknown")[:20])
+            with col2:
+                if st.button("✕", key=f"remove_{i}"):
+                    st.session_state.compare_titles.pop(i)
+                    st.rerun()
+        if st.button("Clear All"):
+            st.session_state.compare_titles = []
+            st.rerun()
 
 
 def search_tmdb(query: str):
@@ -272,6 +292,97 @@ if selected:
 
             attr_html += "</div>"
             st.markdown(attr_html, unsafe_allow_html=True)
+
+        # Add to comparison button
+        can_add = len(st.session_state.compare_titles) < 5
+        already_added = any(t.get("tmdb_id") == data.get("tmdb_id") for t in st.session_state.compare_titles)
+
+        if can_add and not already_added:
+            if st.button("➕ Add to Comparison", type="secondary"):
+                st.session_state.compare_titles.append(data)
+                st.success(f"Added '{data['title']}' to comparison")
+                st.rerun()
+        elif already_added:
+            st.info("✓ Already in comparison")
+        else:
+            st.warning("Comparison full (max 5 titles)")
+
+# --- Title Comparison Section ---
+if len(st.session_state.compare_titles) >= 2:
+    st.divider()
+    st.subheader("📊 Title Comparison")
+
+    compare_titles = st.session_state.compare_titles
+    num_titles = len(compare_titles)
+
+    # Create columns for side-by-side comparison
+    cols = st.columns(num_titles)
+
+    for i, title in enumerate(compare_titles):
+        with cols[i]:
+            # Poster
+            if title.get("poster_url"):
+                st.image(title["poster_url"], width=150)
+
+            # Title and year
+            year = title.get("release_date", "")[:4] if title.get("release_date") else "N/A"
+            tmdb_link = title.get("tmdb_url", "")
+            if tmdb_link:
+                st.markdown(f"**[{title.get('title', 'Unknown')}]({tmdb_link})**")
+            else:
+                st.markdown(f"**{title.get('title', 'Unknown')}**")
+            st.caption(f"{year} | {title.get('runtime', 'N/A')} min")
+
+            # Genres
+            genres = title.get("genres", [])
+            if genres:
+                st.markdown(f"*{', '.join(genres[:3])}*")
+
+            st.divider()
+
+            # Financials
+            st.markdown("**Financials**")
+            budget = title.get("budget", "N/A")
+            revenue = title.get("revenue", "N/A")
+            st.caption(f"Budget: {budget}")
+            st.caption(f"Revenue: {revenue}")
+
+            if title.get("budget_raw") and title.get("revenue_raw") and title["budget_raw"] > 0:
+                profit = title["revenue_raw"] - title["budget_raw"]
+                roi = (profit / title["budget_raw"]) * 100
+                profit_str = f"${profit / 1_000_000:.0f}M" if abs(profit) >= 1_000_000 else f"${profit:,}"
+                color = "green" if profit > 0 else "red"
+                st.markdown(f"Profit: :{color}[{profit_str}] ({roi:.0f}% ROI)")
+
+            st.divider()
+
+            # Cast (top 3)
+            st.markdown("**Top Cast**")
+            cast = title.get("cast", [])[:3]
+            if cast:
+                for actor in cast:
+                    st.caption(f"• {actor.get('name', 'Unknown')}")
+            else:
+                st.caption("N/A")
+
+            st.divider()
+
+            # Computed attributes
+            st.markdown("**Attributes**")
+            st.caption(f"Scale: {title.get('computed_scale', 'N/A').split(' (')[0] if title.get('computed_scale') else 'N/A'}")
+            st.caption(f"VFX: {title.get('computed_vfx', 'N/A')}")
+            st.caption(f"Star Power: {title.get('computed_star_power', 'N/A')}")
+            st.caption(f"Period: {title.get('computed_period', 'N/A')}")
+            st.caption(f"Action: {title.get('computed_action', 'N/A')}")
+
+            # Production info
+            st.divider()
+            countries = title.get("production_countries", [])
+            if countries:
+                st.caption(f"Country: {countries[0]}")
+            companies = title.get("production_companies", [])
+            if companies:
+                st.caption(f"Studio: {companies[0][:15]}...")
 
 # Floating Feedback Bar
 FEEDBACK_BAR = """
