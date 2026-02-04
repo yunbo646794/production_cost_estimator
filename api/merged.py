@@ -1,4 +1,4 @@
-from .tmdb import TMDbClient, get_poster_url, get_profile_url
+from .tmdb import TMDbClient, get_poster_url, get_profile_url, get_logo_url
 from .wikipedia import get_budget_from_wikipedia
 from .attributes import compute_all_attributes
 
@@ -20,14 +20,29 @@ def extract_crew(credits: dict) -> tuple[dict, list]:
     """Extract key crew members from credits and all job titles."""
     crew = credits.get("crew", [])
     result = {
+        # Key Creative
         "directors": [],
         "writers": [],
         "producers": [],
         "composers": [],
         "cinematographers": [],
+        # Production Design
+        "production_designers": [],
+        "art_directors": [],
+        "set_decorators": [],
+        "costume_designers": [],
+        # Post-Production
+        "editors": [],
+        "sound_designers": [],
+        # VFX & Stunts
+        "vfx_supervisors": [],
+        "stunt_coordinators": [],
+        # Makeup
+        "makeup_heads": [],
     }
 
     job_mapping = {
+        # Key Creative
         "Director": "directors",
         "Writer": "writers",
         "Screenplay": "writers",
@@ -35,6 +50,27 @@ def extract_crew(credits: dict) -> tuple[dict, list]:
         "Executive Producer": "producers",
         "Original Music Composer": "composers",
         "Director of Photography": "cinematographers",
+        # Production Design
+        "Production Designer": "production_designers",
+        "Production Design": "production_designers",
+        "Art Director": "art_directors",
+        "Art Direction": "art_directors",
+        "Set Decorator": "set_decorators",
+        "Set Decoration": "set_decorators",
+        "Costume Designer": "costume_designers",
+        "Costume Design": "costume_designers",
+        # Post-Production
+        "Editor": "editors",
+        "Film Editor": "editors",
+        "Sound Designer": "sound_designers",
+        "Supervising Sound Editor": "sound_designers",
+        # VFX & Stunts
+        "Visual Effects Supervisor": "vfx_supervisors",
+        "VFX Supervisor": "vfx_supervisors",
+        "Stunt Coordinator": "stunt_coordinators",
+        # Makeup
+        "Makeup Department Head": "makeup_heads",
+        "Makeup Designer": "makeup_heads",
     }
 
     all_jobs = []
@@ -128,21 +164,41 @@ def get_merged_details(
         except Exception:
             pass  # Silently fail Wikipedia lookup
 
+    # Extract collection/franchise info
+    collection = tmdb_data.get("belongs_to_collection")
+    collection_name = collection.get("name") if collection else None
+    collection_id = collection.get("id") if collection else None
+
     result = {
         # Basic info
         "title": title,
         "original_title": tmdb_data.get("original_title") if is_movie else tmdb_data.get("original_name"),
         "overview": tmdb_data.get("overview"),
+        "tagline": tmdb_data.get("tagline"),
+        "homepage": tmdb_data.get("homepage"),
         "poster_url": get_poster_url(tmdb_data.get("poster_path")),
         "release_date": release_date,
         "genres": [g["name"] for g in tmdb_data.get("genres", [])],
         "runtime": tmdb_data.get("runtime") if is_movie else (tmdb_data.get("episode_run_time", [None])[0] if tmdb_data.get("episode_run_time") else None),
         "status": tmdb_data.get("status"),
         "original_language": tmdb_data.get("original_language"),
+        "spoken_languages": [lang["english_name"] for lang in tmdb_data.get("spoken_languages", [])],
         "production_countries": [c["name"] for c in tmdb_data.get("production_countries", [])],
         "production_companies": [c["name"] for c in tmdb_data.get("production_companies", [])],
+        "production_companies_full": [
+            {
+                "name": c["name"],
+                "logo_url": get_logo_url(c.get("logo_path")),
+                "origin_country": c.get("origin_country"),
+            }
+            for c in tmdb_data.get("production_companies", [])
+        ],
         "media_type": media_type,
         "tmdb_id": tmdb_id,
+
+        # Franchise/Collection (movies only)
+        "collection": collection_name,
+        "collection_id": collection_id,
 
         # Financials (movies only)
         "budget": budget_formatted,
@@ -163,12 +219,29 @@ def get_merged_details(
         "networks": [n["name"] for n in tmdb_data.get("networks", [])] if not is_movie else None,
         "created_by": [c["name"] for c in tmdb_data.get("created_by", [])] if not is_movie else None,
 
-        # Crew and cast
+        # Key Creative Crew
         "directors": crew.get("directors", []),
         "writers": crew.get("writers", []),
         "producers": crew.get("producers", [])[:3],
         "composers": crew.get("composers", []),
         "cinematographers": crew.get("cinematographers", []),
+
+        # Production Design Crew
+        "production_designers": crew.get("production_designers", []),
+        "art_directors": crew.get("art_directors", []),
+        "set_decorators": crew.get("set_decorators", []),
+        "costume_designers": crew.get("costume_designers", []),
+        "makeup_heads": crew.get("makeup_heads", []),
+
+        # Post-Production Crew
+        "editors": crew.get("editors", []),
+        "sound_designers": crew.get("sound_designers", []),
+
+        # VFX & Stunts Crew
+        "vfx_supervisors": crew.get("vfx_supervisors", []),
+        "stunt_coordinators": crew.get("stunt_coordinators", []),
+
+        # Cast
         "cast": cast,
     }
 

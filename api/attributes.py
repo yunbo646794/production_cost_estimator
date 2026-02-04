@@ -111,8 +111,10 @@ def detect_production_scale(companies: list, budget_raw: int) -> str:
         return "Mid-Budget ($20-50M)"
     if budget >= 5_000_000:
         return "Low-Budget ($5-20M)"
+    if budget >= 2_500_000:
+        return "Ultra-Low ($2.5-5M)"
     if budget > 0:
-        return "Ultra-Low (<$5M)"
+        return "Micro (<$2.5M)"
     return "Unknown"  # No budget data available
 
 

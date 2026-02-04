@@ -3,6 +3,7 @@ import requests
 TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/"
 POSTER_SIZE = "w500"
 PROFILE_SIZE = "w185"
+LOGO_SIZE = "w154"
 
 
 def get_poster_url(poster_path: str) -> str | None:
@@ -16,6 +17,13 @@ def get_profile_url(profile_path: str) -> str | None:
     """Construct full profile image URL from TMDb path."""
     if profile_path:
         return f"{TMDB_IMAGE_BASE}{PROFILE_SIZE}{profile_path}"
+    return None
+
+
+def get_logo_url(logo_path: str) -> str | None:
+    """Construct full logo URL from TMDb path."""
+    if logo_path:
+        return f"{TMDB_IMAGE_BASE}{LOGO_SIZE}{logo_path}"
     return None
 
 

@@ -121,6 +121,9 @@ if selected:
             if data["original_title"] and data["original_title"] != data["title"]:
                 st.caption(f"Original: {data['original_title']}")
 
+            if data.get("tagline"):
+                st.markdown(f"*\"{data['tagline']}\"*")
+
             info_parts = []
             if data["release_date"]:
                 info_parts.append(data["release_date"][:4])
@@ -190,8 +193,11 @@ if selected:
             else:
                 st.info("💡 Budget/revenue data not found in Wikipedia or TMDb.")
 
-        # Crew section
-        with st.expander("Crew"):
+        # Crew section with tabs
+        st.subheader("Crew")
+        crew_tabs = st.tabs(["Key Creative", "Production Design", "Post-Production", "VFX & Stunts"])
+
+        with crew_tabs[0]:  # Key Creative
             crew_items = []
             if data["directors"]:
                 crew_items.append(f"**Director:** {', '.join(data['directors'])}")
@@ -203,12 +209,53 @@ if selected:
                 crew_items.append(f"**Composer:** {', '.join(data['composers'])}")
             if data["cinematographers"]:
                 crew_items.append(f"**Cinematography:** {', '.join(data['cinematographers'])}")
-
             if crew_items:
                 for item in crew_items:
                     st.markdown(item)
             else:
-                st.write("No crew information available.")
+                st.caption("No key creative crew information available.")
+
+        with crew_tabs[1]:  # Production Design
+            design_items = []
+            if data.get("production_designers"):
+                design_items.append(f"**Production Designer:** {', '.join(data['production_designers'])}")
+            if data.get("art_directors"):
+                design_items.append(f"**Art Director:** {', '.join(data['art_directors'][:3])}")
+            if data.get("set_decorators"):
+                design_items.append(f"**Set Decorator:** {', '.join(data['set_decorators'][:3])}")
+            if data.get("costume_designers"):
+                design_items.append(f"**Costume Designer:** {', '.join(data['costume_designers'])}")
+            if data.get("makeup_heads"):
+                design_items.append(f"**Makeup:** {', '.join(data['makeup_heads'][:2])}")
+            if design_items:
+                for item in design_items:
+                    st.markdown(item)
+            else:
+                st.caption("No production design crew information available.")
+
+        with crew_tabs[2]:  # Post-Production
+            post_items = []
+            if data.get("editors"):
+                post_items.append(f"**Editor:** {', '.join(data['editors'][:3])}")
+            if data.get("sound_designers"):
+                post_items.append(f"**Sound Designer:** {', '.join(data['sound_designers'][:3])}")
+            if post_items:
+                for item in post_items:
+                    st.markdown(item)
+            else:
+                st.caption("No post-production crew information available.")
+
+        with crew_tabs[3]:  # VFX & Stunts
+            vfx_items = []
+            if data.get("vfx_supervisors"):
+                vfx_items.append(f"**VFX Supervisor:** {', '.join(data['vfx_supervisors'][:3])}")
+            if data.get("stunt_coordinators"):
+                vfx_items.append(f"**Stunt Coordinator:** {', '.join(data['stunt_coordinators'][:3])}")
+            if vfx_items:
+                for item in vfx_items:
+                    st.markdown(item)
+            else:
+                st.caption("No VFX or stunt crew information available.")
 
         # Cast section
         with st.expander("Cast"):
@@ -225,12 +272,42 @@ if selected:
 
         # Additional info
         with st.expander("Additional Info"):
-            if data["production_companies"]:
-                st.markdown(f"**Production:** {', '.join(data['production_companies'][:5])}")
+            # Franchise/Collection info
+            if data.get("collection"):
+                collection_url = f"https://www.themoviedb.org/collection/{data['collection_id']}" if data.get("collection_id") else None
+                if collection_url:
+                    st.markdown(f"**Franchise:** [{data['collection']}]({collection_url})")
+                else:
+                    st.markdown(f"**Franchise:** {data['collection']}")
+
+            # Spoken languages
+            if data.get("spoken_languages"):
+                st.markdown(f"**Languages:** {', '.join(data['spoken_languages'])}")
+            elif data.get("original_language"):
+                st.markdown(f"**Language:** {data['original_language'].upper()}")
+
             if data["production_countries"]:
                 st.markdown(f"**Countries:** {', '.join(data['production_countries'])}")
-            if data["original_language"]:
-                st.markdown(f"**Language:** {data['original_language'].upper()}")
+
+            # Production companies with logos
+            if data.get("production_companies_full"):
+                st.markdown("**Production Companies:**")
+                companies = data["production_companies_full"][:4]
+                logo_cols = st.columns(len(companies))
+                for i, company in enumerate(companies):
+                    with logo_cols[i]:
+                        if company.get("logo_url"):
+                            st.image(company["logo_url"], width=80)
+                        name = company["name"]
+                        if company.get("origin_country"):
+                            name += f" ({company['origin_country']})"
+                        st.caption(name)
+            elif data["production_companies"]:
+                st.markdown(f"**Production:** {', '.join(data['production_companies'][:5])}")
+
+            # Official homepage
+            if data.get("homepage"):
+                st.markdown(f"**Official Site:** [{data['homepage'][:40]}...]({data['homepage']})" if len(data.get("homepage", "")) > 40 else f"**Official Site:** [{data['homepage']}]({data['homepage']})")
 
         # Computed Attributes (for Cost Estimator)
         with st.expander("Computed Attributes", expanded=True):
@@ -315,74 +392,164 @@ if len(st.session_state.compare_titles) >= 2:
     compare_titles = st.session_state.compare_titles
     num_titles = len(compare_titles)
 
-    # Create columns for side-by-side comparison
-    cols = st.columns(num_titles)
+    # Helper to safely get values
+    def get_val(title, key, default="N/A"):
+        val = title.get(key)
+        return val if val else default
 
-    for i, title in enumerate(compare_titles):
-        with cols[i]:
-            # Poster
-            if title.get("poster_url"):
-                st.image(title["poster_url"], width=150)
+    # Build comparison table HTML with row-based layout for alignment
+    col_width = 100 // num_titles
 
-            # Title and year
-            year = title.get("release_date", "")[:4] if title.get("release_date") else "N/A"
-            tmdb_link = title.get("tmdb_url", "")
-            if tmdb_link:
-                st.markdown(f"**[{title.get('title', 'Unknown')}]({tmdb_link})**")
-            else:
-                st.markdown(f"**{title.get('title', 'Unknown')}**")
-            st.caption(f"{year} | {title.get('runtime', 'N/A')} min")
+    html = f"""
+    <style>
+    .comp-table {{ width: 100%; border-collapse: collapse; }}
+    .comp-table td {{
+        vertical-align: top;
+        padding: 12px;
+        border-bottom: 1px solid #333;
+        width: {col_width}%;
+    }}
+    .comp-table tr.section-header td {{
+        background: #1e3a5f;
+        color: #d4af37;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        padding: 8px 12px;
+    }}
+    .comp-poster {{ text-align: center; }}
+    .comp-poster img {{ max-width: 150px; border-radius: 8px; }}
+    .comp-title {{ font-weight: 600; font-size: 14px; }}
+    .comp-title a {{ color: #58a6ff; text-decoration: none; }}
+    .comp-title a:hover {{ text-decoration: underline; }}
+    .comp-subtitle {{ color: #888; font-size: 12px; }}
+    .comp-value {{ font-size: 13px; }}
+    .profit-pos {{ color: #4ade80; }}
+    .profit-neg {{ color: #f87171; }}
+    </style>
+    <table class="comp-table">
+    """
 
-            # Genres
-            genres = title.get("genres", [])
-            if genres:
-                st.markdown(f"*{', '.join(genres[:3])}*")
+    # Row 1: Posters + Title + Year
+    html += "<tr>"
+    for t in compare_titles:
+        poster = t.get("poster_url", "")
+        title_name = t.get("title", "Unknown")
+        year = t.get("release_date", "")[:4] if t.get("release_date") else "N/A"
+        runtime = t.get("runtime", "N/A")
+        tmdb_url = t.get("tmdb_url", "")
+        poster_img = f'<img src="{poster}">' if poster else ""
+        title_link = f'<a href="{tmdb_url}" target="_blank">{title_name}</a>' if tmdb_url else title_name
+        html += f'''<td class="comp-poster">
+            {poster_img}
+            <div class="comp-title">{title_link}</div>
+            <div class="comp-subtitle">{year} | {runtime} min</div>
+        </td>'''
+    html += "</tr>"
 
-            st.divider()
+    # Row 2: Genres
+    html += f'<tr class="section-header">{"".join(["<td>Genres</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        genres = ", ".join(t.get("genres", [])[:3]) or "N/A"
+        html += f'<td class="comp-value">{genres}</td>'
+    html += "</tr>"
 
-            # Financials
-            st.markdown("**Financials**")
-            budget = title.get("budget", "N/A")
-            revenue = title.get("revenue", "N/A")
-            st.caption(f"Budget: {budget}")
-            st.caption(f"Revenue: {revenue}")
+    # Row 3: Reception
+    html += f'<tr class="section-header">{"".join(["<td>Reception</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        rating = t.get("vote_average")
+        votes = t.get("vote_count")
+        if rating:
+            rating_html = f'<div>⭐ {rating:.1f}/10</div>'
+            if votes:
+                rating_html += f'<div style="color:#888;font-size:11px;">{votes:,} votes</div>'
+        else:
+            rating_html = "N/A"
+        html += f'<td class="comp-value">{rating_html}</td>'
+    html += "</tr>"
 
-            if title.get("budget_raw") and title.get("revenue_raw") and title["budget_raw"] > 0:
-                profit = title["revenue_raw"] - title["budget_raw"]
-                roi = (profit / title["budget_raw"]) * 100
-                profit_str = f"${profit / 1_000_000:.0f}M" if abs(profit) >= 1_000_000 else f"${profit:,}"
-                color = "green" if profit > 0 else "red"
-                st.markdown(f"Profit: :{color}[{profit_str}] ({roi:.0f}% ROI)")
+    # Row 4: Creative Team
+    html += f'<tr class="section-header">{"".join(["<td>Creative</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        director = ", ".join(t.get("directors", [])[:2]) or "N/A"
+        composer = ", ".join(t.get("composers", [])[:1]) or "N/A"
+        cinematographer = ", ".join(t.get("cinematographers", [])[:1]) or "N/A"
+        html += f'''<td class="comp-value">
+            <div>Director: {director}</div>
+            <div>Composer: {composer}</div>
+            <div>DP: {cinematographer}</div>
+        </td>'''
+    html += "</tr>"
 
-            st.divider()
+    # Row 5: Financials
+    html += f'<tr class="section-header">{"".join(["<td>Financials</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        budget = t.get("budget", "N/A")
+        revenue = t.get("revenue", "N/A")
+        profit_html = ""
+        if t.get("budget_raw") and t.get("revenue_raw") and t["budget_raw"] > 0:
+            profit = t["revenue_raw"] - t["budget_raw"]
+            roi = (profit / t["budget_raw"]) * 100
+            profit_str = f"${profit / 1_000_000:.0f}M" if abs(profit) >= 1_000_000 else f"${profit:,}"
+            css_class = "profit-pos" if profit > 0 else "profit-neg"
+            profit_html = f'<div class="{css_class}">Profit: {profit_str} ({roi:.0f}%)</div>'
+        html += f'''<td class="comp-value">
+            <div>Budget: {budget}</div>
+            <div>Revenue: {revenue}</div>
+            {profit_html}
+        </td>'''
+    html += "</tr>"
 
-            # Cast (top 3)
-            st.markdown("**Top Cast**")
-            cast = title.get("cast", [])[:3]
-            if cast:
-                for actor in cast:
-                    st.caption(f"• {actor.get('name', 'Unknown')}")
-            else:
-                st.caption("N/A")
+    # Row 6: Top Cast
+    html += f'<tr class="section-header">{"".join(["<td>Top Cast</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        cast = t.get("cast", [])[:3]
+        cast_html = "<br>".join([f"• {c.get('name', 'Unknown')}" for c in cast]) if cast else "N/A"
+        html += f'<td class="comp-value">{cast_html}</td>'
+    html += "</tr>"
 
-            st.divider()
+    # Row 7: Attributes
+    html += f'<tr class="section-header">{"".join(["<td>Attributes</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        scale = (t.get("computed_scale") or "N/A").split(" (")[0]
+        vfx = t.get("computed_vfx", "N/A")
+        star = t.get("computed_star_power", "N/A")
+        period = t.get("computed_period", "N/A")
+        action = t.get("computed_action", "N/A")
+        html += f'''<td class="comp-value">
+            <div>Scale: {scale}</div>
+            <div>VFX: {vfx}</div>
+            <div>Star Power: {star}</div>
+            <div>Period: {period}</div>
+            <div>Action: {action}</div>
+        </td>'''
+    html += "</tr>"
 
-            # Computed attributes
-            st.markdown("**Attributes**")
-            st.caption(f"Scale: {title.get('computed_scale', 'N/A').split(' (')[0] if title.get('computed_scale') else 'N/A'}")
-            st.caption(f"VFX: {title.get('computed_vfx', 'N/A')}")
-            st.caption(f"Star Power: {title.get('computed_star_power', 'N/A')}")
-            st.caption(f"Period: {title.get('computed_period', 'N/A')}")
-            st.caption(f"Action: {title.get('computed_action', 'N/A')}")
+    # Row 8: Production
+    html += f'<tr class="section-header">{"".join(["<td>Production</td>"] * num_titles)}</tr>'
+    html += "<tr>"
+    for t in compare_titles:
+        country = t.get("production_countries", ["N/A"])[0] if t.get("production_countries") else "N/A"
+        studio = t.get("production_companies", ["N/A"])[0][:20] if t.get("production_companies") else "N/A"
+        franchise = t.get("collection") or "Standalone"
+        languages = ", ".join(t.get("spoken_languages", [])[:2]) or t.get("original_language", "N/A").upper()
+        html += f'''<td class="comp-value">
+            <div>Franchise: {franchise}</div>
+            <div>Studio: {studio}</div>
+            <div>Country: {country}</div>
+            <div>Languages: {languages}</div>
+        </td>'''
+    html += "</tr>"
 
-            # Production info
-            st.divider()
-            countries = title.get("production_countries", [])
-            if countries:
-                st.caption(f"Country: {countries[0]}")
-            companies = title.get("production_companies", [])
-            if companies:
-                st.caption(f"Studio: {companies[0][:15]}...")
+    html += "</table>"
+
+    st.markdown(html, unsafe_allow_html=True)
 
 # Floating Feedback Bar
 FEEDBACK_BAR = """

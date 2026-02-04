@@ -96,7 +96,7 @@ VFX_OPTIONS = ["Heavy", "Moderate", "Light", "Practical Only"]
 LOCATION_OPTIONS = ["Contained (1-2)", "Limited (3-5)", "Moderate (6-10)", "Extensive (10+)", "Global"]
 ACTION_OPTIONS = ["High", "Moderate", "Light", "Dialogue-Driven"]
 COUNTRY_OPTIONS = ["USA", "Canada", "UK/Ireland", "Australia/New Zealand", "LATAM", "Europe", "Asia"]
-SCALE_OPTIONS = ["Blockbuster ($100M+)", "Major Studio ($50-100M)", "Mid-Budget ($20-50M)", "Low-Budget ($5-20M)", "Ultra-Low (<$5M)"]
+SCALE_OPTIONS = ["Blockbuster ($100M+)", "Major Studio ($50-100M)", "Mid-Budget ($20-50M)", "Low-Budget ($5-20M)", "Ultra-Low ($2.5-5M)", "Micro (<$2.5M)"]
 
 st.divider()
 
@@ -179,7 +179,7 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
                             original = title["budget_raw"]
                             if adjust_inflation and year_str.isdigit():
                                 adjusted = adjust_for_inflation(original, int(year_str))
-                                st.caption(f"Budget: {format_currency(original)} → {format_currency(adjusted)} (2024$)")
+                                st.caption(f"{format_currency(original)}→{format_currency(adjusted)} inflation adj.")
                             else:
                                 st.caption(f"Budget: {format_currency(original)}")
                     st.divider()

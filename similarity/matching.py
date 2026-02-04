@@ -26,7 +26,14 @@ SCALE_TIERS = [
     "Mid-Budget",
     "Low-Budget",
     "Ultra-Low",
+    "Micro",
 ]
+
+# Map new UI scale names to old DB names for backward compatibility
+SCALE_NAME_MAP = {
+    "Low-Budget": "Indie",      # New UI name -> Old DB name
+    "Ultra-Low": "Micro",       # UI "Ultra-Low ($2.5-5M)" -> DB "Micro (<$5M)"
+}
 
 # Attribute adjacency for partial matching
 ADJACENCY = {
@@ -356,6 +363,9 @@ def filter_by_scale(user_scale: str, title_scale: str) -> bool:
     # Extract tier names (e.g., "Blockbuster ($100M+)" -> "Blockbuster")
     user_tier = user_scale.split(" (")[0] if user_scale else ""
     title_tier = title_scale.split(" (")[0] if title_scale else ""
+
+    # Map new UI names to old DB names for compatibility
+    user_tier = SCALE_NAME_MAP.get(user_tier, user_tier)
 
     # Exact match only
     return user_tier == title_tier
