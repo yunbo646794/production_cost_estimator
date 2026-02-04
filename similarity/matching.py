@@ -21,8 +21,8 @@ SCALE_TIERS = [
     "Blockbuster",
     "Major Studio",
     "Mid-Budget",
-    "Indie",
-    "Micro",
+    "Low-Budget",
+    "Ultra-Low",
 ]
 
 # Attribute adjacency for partial matching
