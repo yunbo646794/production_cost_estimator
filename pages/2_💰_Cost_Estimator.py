@@ -114,7 +114,8 @@ with col1:
     star_power = st.selectbox("5. Star Power", STAR_POWER_OPTIONS, index=2)
 
 with col2:
-    vfx = st.selectbox("6. VFX Intensity", VFX_OPTIONS, index=2)
+    vfx = st.selectbox("6. VFX Intensity", VFX_OPTIONS, index=2,
+                       help="**Heavy:** 50%+ CGI shots (Marvel, Avatar) | **Moderate:** 20-50% VFX (action films) | **Light:** <20% VFX (minor enhancements) | **Practical Only:** No CGI, practical effects only")
     locations = st.selectbox("7. Location Count", LOCATION_OPTIONS, index=1)
     action = st.selectbox("8. Action Complexity", ACTION_OPTIONS, index=2)
     country = st.selectbox("9. Production Country", COUNTRY_OPTIONS, index=0)
