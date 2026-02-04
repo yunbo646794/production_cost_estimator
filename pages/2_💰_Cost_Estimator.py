@@ -95,7 +95,7 @@ STAR_POWER_OPTIONS = ["A-List", "B-List", "Rising Stars", "Ensemble/Unknown"]
 VFX_OPTIONS = ["Heavy", "Moderate", "Light", "Practical Only"]
 LOCATION_OPTIONS = ["Contained (1-2)", "Limited (3-5)", "Moderate (6-10)", "Extensive (10+)", "Global"]
 ACTION_OPTIONS = ["High", "Moderate", "Light", "Dialogue-Driven"]
-COUNTRY_OPTIONS = ["USA (Hollywood)", "UK", "Canada/Australia", "Europe (non-UK)", "Asia/Other"]
+COUNTRY_OPTIONS = ["USA", "Canada", "UK/Ireland", "Australia/New Zealand", "LATAM", "Europe", "Asia"]
 SCALE_OPTIONS = ["Blockbuster ($100M+)", "Major Studio ($50-100M)", "Mid-Budget ($20-50M)", "Indie ($5-20M)", "Micro (<$5M)"]
 
 st.divider()

@@ -35,11 +35,13 @@ ADJACENCY = {
 
 # Country mapping from dropdown options to TMDb production country names
 COUNTRY_MAP = {
-    "USA (Hollywood)": ["United States of America"],
-    "UK": ["United Kingdom"],
-    "Canada/Australia": ["Canada", "Australia"],
-    "Europe (non-UK)": ["France", "Germany", "Spain", "Italy", "Belgium", "Netherlands", "Sweden", "Norway", "Denmark", "Finland", "Ireland", "Austria", "Switzerland", "Poland", "Czech Republic", "Hungary", "Romania", "Portugal", "Greece"],
-    "Asia/Other": [],  # Match anything not in above categories
+    "USA": ["United States of America"],
+    "Canada": ["Canada"],
+    "UK/Ireland": ["United Kingdom", "Ireland"],
+    "Australia/New Zealand": ["Australia", "New Zealand"],
+    "LATAM": ["Mexico", "Brazil", "Argentina", "Chile", "Colombia", "Peru", "Venezuela", "Ecuador", "Bolivia", "Paraguay", "Uruguay", "Cuba", "Dominican Republic", "Puerto Rico", "Costa Rica", "Panama", "Guatemala", "Honduras", "El Salvador", "Nicaragua"],
+    "Europe": ["France", "Germany", "Spain", "Italy", "Belgium", "Netherlands", "Sweden", "Norway", "Denmark", "Finland", "Austria", "Switzerland", "Poland", "Czech Republic", "Hungary", "Romania", "Portugal", "Greece", "Russia", "Ukraine"],
+    "Asia": [],  # Catch-all for non-Western
 }
 
 # Runtime tier boundaries (minutes)
@@ -128,9 +130,9 @@ def match_country(user_country: str, title_countries: list) -> float:
 
     expected = COUNTRY_MAP.get(user_country, [])
 
-    # "Asia/Other" matches anything not in the Western categories
+    # "Asia" matches anything not in the Western categories
     # Primary country (first listed) must be non-western
-    if user_country == "Asia/Other":
+    if user_country == "Asia":
         western = set()
         for key, vals in COUNTRY_MAP.items():
             if key != "Asia/Other":
@@ -149,7 +151,7 @@ def match_country(user_country: str, title_countries: list) -> float:
         return 0.5
 
     # Partial: English-speaking countries are somewhat similar
-    english_speaking = {"United States of America", "United Kingdom", "Canada", "Australia"}
+    english_speaking = {"United States of America", "United Kingdom", "Canada", "Australia", "New Zealand", "Ireland"}
     if expected and set(expected) & english_speaking and set(title_countries) & english_speaking:
         return 0.3
 
