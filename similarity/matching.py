@@ -12,8 +12,11 @@ GENRE_MAP = {
     "Action/Adventure": ["Action", "Adventure"],
     "Drama": ["Drama"],
     "Comedy": ["Comedy"],
-    "Horror/Thriller": ["Horror", "Thriller"],
+    "Horror": ["Horror"],
+    "Thriller": ["Thriller"],
     "Sci-Fi/Fantasy": ["Science Fiction", "Fantasy"],
+    "Romance": ["Romance"],
+    "Documentary": ["Documentary"],
 }
 
 # Scale tiers in order (for adjacency matching)
@@ -55,13 +58,40 @@ RUNTIME_TIERS = {
 }
 
 
-def matches_genre(user_genre: str, title_genres: list) -> bool:
-    """Check if user's selected genre matches any of the title's genres."""
-    if not title_genres:
-        return False
+def matches_genre(user_genres: list, title_genres: list) -> tuple[float, str]:
+    """
+    Check if user's selected genres match any of the title's genres.
+    Returns (score 0.0-1.0, matched_genre_name or None).
+    Supports multiple user genre selections.
+    """
+    if not title_genres or not user_genres:
+        return 0.0, None
 
-    target_genres = GENRE_MAP.get(user_genre, [])
-    return any(g in target_genres for g in title_genres)
+    # Check each user genre for matches
+    for user_genre in user_genres:
+        target_genres = GENRE_MAP.get(user_genre, [])
+        for title_genre in title_genres:
+            if title_genre in target_genres:
+                return 1.0, title_genre
+
+    # Check for related genres (partial match)
+    related_map = {
+        "Action/Adventure": ["Thriller", "Science Fiction", "War"],
+        "Drama": ["Romance", "Crime", "History"],
+        "Horror": ["Thriller", "Mystery"],
+        "Thriller": ["Horror", "Mystery", "Crime"],
+        "Sci-Fi/Fantasy": ["Adventure", "Action"],
+        "Comedy": ["Romance"],
+        "Romance": ["Drama", "Comedy"],
+    }
+
+    for user_genre in user_genres:
+        related = related_map.get(user_genre, [])
+        for title_genre in title_genres:
+            if title_genre in related:
+                return 0.5, title_genre
+
+    return 0.0, None
 
 
 def match_scale(user_scale: str, title_scale: str) -> float:
@@ -226,28 +256,18 @@ def compute_similarity(user_attrs: dict, title: dict) -> tuple[float, list]:
     }
     max_points = sum(weights.values())  # 96
 
-    # --- Genre matching ---
-    user_genre = user_attrs.get("genre", "")
+    # --- Genre matching (supports multi-select) ---
+    user_genres = user_attrs.get("genres", [])
     title_genres = title.get("genres", [])
-    if matches_genre(user_genre, title_genres):
+    genre_score, matched_genre = matches_genre(user_genres, title_genres)
+    if genre_score == 1.0:
         earned += weights["genre"]
-        if title_genres:
-            reasons.append(f"Genre: {title_genres[0]}")
-    elif title_genres:
-        related = False
-        if user_genre == "Action/Adventure" and any(g in ["Thriller", "Science Fiction"] for g in title_genres):
-            related = True
-        elif user_genre == "Drama" and any(g in ["Romance", "Crime"] for g in title_genres):
-            related = True
-        elif user_genre == "Horror/Thriller" and any(g in ["Mystery", "Crime"] for g in title_genres):
-            related = True
-        elif user_genre == "Sci-Fi/Fantasy" and any(g in ["Adventure", "Action"] for g in title_genres):
-            related = True
-
-        if related:
-            earned += weights["genre"] * 0.3
-            reasons.append(f"Genre: ~{title_genres[0]}")
-        # else: mismatch, 0 points
+        if matched_genre:
+            reasons.append(f"Genre: {matched_genre}")
+    elif genre_score >= 0.5:
+        earned += weights["genre"] * 0.5
+        if matched_genre:
+            reasons.append(f"Genre: ~{matched_genre}")
 
     # --- Distance-based attributes (vfx, action, period, star_power) ---
     attr_map = {

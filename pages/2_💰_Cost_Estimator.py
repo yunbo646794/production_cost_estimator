@@ -88,7 +88,7 @@ def load_titles_db():
 
 # Attribute Definitions
 FORMAT_OPTIONS = ["Studio Feature", "Indie Feature", "TV Series", "Limited Series", "Documentary", "Animation"]
-GENRE_OPTIONS = ["Action/Adventure", "Drama", "Comedy", "Horror/Thriller", "Sci-Fi/Fantasy"]
+GENRE_OPTIONS = ["Action/Adventure", "Drama", "Comedy", "Horror", "Thriller", "Sci-Fi/Fantasy", "Romance", "Documentary"]
 RUNTIME_OPTIONS = ["15 min", "30 min", "60 min", "90 min", "120 min", "150+ min"]
 PERIOD_OPTIONS = ["Contemporary", "Recent Past (1980-2010)", "Period (1900-1980)", "Historical (pre-1900)", "Futuristic"]
 STAR_POWER_OPTIONS = ["A-List", "A-List Cusp", "B-List", "Rising Stars", "Ensemble/Unknown"]
@@ -107,7 +107,8 @@ col1, col2 = st.columns(2)
 
 with col1:
     format_type = st.selectbox("1. Format", FORMAT_OPTIONS, index=0)
-    genre = st.selectbox("2. Primary Genre", GENRE_OPTIONS, index=1)
+    genres = st.multiselect("2. Genre(s)", GENRE_OPTIONS, default=["Drama"],
+                            help="Select one or more genres (first = primary)")
     runtime = st.selectbox("3. Runtime", RUNTIME_OPTIONS, index=3,
                           help="Target runtime for your project")
     period = st.selectbox("4. Period/Era", PERIOD_OPTIONS, index=0)
@@ -134,7 +135,7 @@ if st.button("🔍 Find Comparable Titles & Estimate", type="primary"):
     if titles:
         # Build user attributes dict for similarity matching
         user_attrs = {
-            "genre": genre,
+            "genres": genres if genres else ["Drama"],  # Default to Drama if none selected
             "scale": scale,
             "vfx": vfx,
             "action": action,
