@@ -89,7 +89,7 @@ def load_titles_db():
 # Attribute Definitions
 FORMAT_OPTIONS = ["Studio Feature", "Indie Feature", "TV Series", "Limited Series", "Documentary", "Animation"]
 GENRE_OPTIONS = ["Action/Adventure", "Drama", "Comedy", "Horror/Thriller", "Sci-Fi/Fantasy"]
-RUNTIME_OPTIONS = ["Short", "Standard", "Long", "Epic"]
+RUNTIME_OPTIONS = ["15 min", "30 min", "60 min", "90 min", "120 min", "150+ min"]
 PERIOD_OPTIONS = ["Contemporary", "Recent Past (1980-2010)", "Period (1900-1980)", "Historical (pre-1900)", "Futuristic"]
 STAR_POWER_OPTIONS = ["A-List", "B-List", "Rising Stars", "Ensemble/Unknown"]
 VFX_OPTIONS = ["Heavy", "Moderate", "Light", "Practical Only"]
@@ -108,8 +108,8 @@ col1, col2 = st.columns(2)
 with col1:
     format_type = st.selectbox("1. Format", FORMAT_OPTIONS, index=0)
     genre = st.selectbox("2. Primary Genre", GENRE_OPTIONS, index=1)
-    runtime = st.selectbox("3. Runtime", RUNTIME_OPTIONS, index=1,
-                          help="Film: Short <90min, Standard 90-120min, Long 120-150min, Epic 150+min")
+    runtime = st.selectbox("3. Runtime", RUNTIME_OPTIONS, index=3,
+                          help="Target runtime for your project")
     period = st.selectbox("4. Period/Era", PERIOD_OPTIONS, index=0)
     star_power = st.selectbox("5. Star Power", STAR_POWER_OPTIONS, index=2)
 

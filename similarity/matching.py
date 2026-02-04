@@ -46,10 +46,12 @@ COUNTRY_MAP = {
 
 # Runtime tier boundaries (minutes)
 RUNTIME_TIERS = {
-    "Short": (0, 90),
-    "Standard": (90, 120),
-    "Long": (120, 150),
-    "Epic": (150, 999),
+    "15 min": (0, 22),
+    "30 min": (22, 45),
+    "60 min": (45, 75),
+    "90 min": (75, 105),
+    "120 min": (105, 135),
+    "150+ min": (135, 999),
 }
 
 
@@ -185,12 +187,15 @@ def match_runtime(user_runtime: str, title_runtime) -> float:
         return 1.0
 
     # Check adjacency
-    tier_order = ["Short", "Standard", "Long", "Epic"]
+    tier_order = ["15 min", "30 min", "60 min", "90 min", "120 min", "150+ min"]
     try:
         user_idx = tier_order.index(user_runtime)
         title_idx = tier_order.index(title_tier)
-        if abs(user_idx - title_idx) == 1:
+        distance = abs(user_idx - title_idx)
+        if distance == 1:
             return 0.5
+        elif distance == 2:
+            return 0.25
     except ValueError:
         pass
 
