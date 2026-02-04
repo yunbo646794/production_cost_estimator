@@ -30,7 +30,7 @@ ADJACENCY = {
     "vfx": ["Heavy", "Moderate", "Light", "Practical Only"],
     "action": ["High", "Moderate", "Light", "Dialogue-Driven"],
     "period": ["Futuristic", "Contemporary", "Recent Past (1980-2010)", "Period (1900-1980)", "Historical (pre-1900)"],
-    "star_power": ["A-List", "B-List", "Rising Stars", "Ensemble/Unknown"],
+    "star_power": ["A-List", "A-List Cusp", "B-List", "Rising Stars", "Ensemble/Unknown"],
 }
 
 # Country mapping from dropdown options to TMDb production country names

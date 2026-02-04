@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "description": "Actor tier classifications for star power estimation",
   "tiers": {
     "A-List": {
@@ -11,8 +11,7 @@
         "Scarlett Johansson", "Jennifer Lawrence", "Angelina Jolie", "Julia Roberts",
         "Sandra Bullock", "Margot Robbie", "Gal Gadot", "Emma Stone",
         "Chris Hemsworth", "Chris Evans", "Chris Pratt", "Ryan Gosling",
-        "Joaquin Phoenix", "Christian Bale", "Benedict Cumberbatch", "Chadwick Boseman",
-        "Timothee Chalamet", "Zendaya", "Tom Holland", "Florence Pugh",
+        "Joaquin Phoenix", "Christian Bale", "Benedict Cumberbatch",
         "Anne Hathaway", "Natalie Portman", "Meryl Streep", "Cate Blanchett",
         "Nicole Kidman", "Charlize Theron", "Reese Witherspoon", "Amy Adams",
         "Adam Sandler", "Kevin Hart", "Seth Rogen", "Melissa McCarthy",
@@ -20,22 +19,36 @@
         "Harrison Ford", "Keanu Reeves", "Vin Diesel", "Jason Statham"
       ]
     },
-    "B-List": {
-      "salary_range": "$3-10M per film",
+    "A-List Cusp": {
+      "salary_range": "$8-15M per film",
+      "description": "Recent breakout stars trending toward A-List status",
       "actors": [
-        "John Boyega", "Oscar Isaac", "Pedro Pascal", "John Krasinski",
-        "Emily Blunt", "Jessica Chastain", "Viola Davis", "Lupita Nyong'o",
-        "Michael B. Jordan", "Daniel Kaluuya", "Rami Malek", "Austin Butler",
-        "Paul Rudd", "Jason Sudeikis", "Adam Driver", "Andrew Garfield",
-        "Miles Teller", "Glen Powell", "Sydney Sweeney", "Anya Taylor-Joy",
-        "Saoirse Ronan", "Rachel McAdams", "Elizabeth Olsen", "Hailee Steinfeld",
-        "Dave Bautista", "John Cena", "Simu Liu", "Jonathan Majors",
-        "Awkwafina", "Ke Huy Quan", "Michelle Yeoh", "Stephanie Hsu",
-        "Colin Farrell", "Michael Fassbender", "Jake Gyllenhaal", "Jeremy Renner",
-        "Josh Brolin", "Ethan Hawke", "Willem Dafoe", "Mark Ruffalo",
-        "Paul Dano", "Barry Keoghan", "Robert Pattinson", "Kristen Stewart",
-        "Dakota Johnson", "Ana de Armas", "Jenna Ortega", "Maitreyi Ramakrishnan",
-        "Aubrey Plaza", "Keke Palmer", "LaKeith Stanfield", "Brian Tyree Henry"
+        "Timothee Chalamet", "Zendaya", "Tom Holland", "Florence Pugh",
+        "Sydney Sweeney", "Glen Powell", "Austin Butler", "Paul Mescal",
+        "Anya Taylor-Joy", "Jenna Ortega", "Jacob Elordi", "Barry Keoghan",
+        "Rachel Zegler", "Daisy Edgar-Jones", "Harris Dickinson", "Mike Faist",
+        "Cailee Spaeny", "Dominic Sessa", "Charles Melton", "Fantasia Barrino",
+        "Andrew Garfield", "Robert Pattinson", "Adam Driver", "Oscar Isaac",
+        "Pedro Pascal", "Michael B. Jordan", "Daniel Kaluuya", "Rami Malek",
+        "Ana de Armas", "Michelle Yeoh", "Ke Huy Quan", "Stephanie Hsu",
+        "Jonathan Majors", "Keke Palmer", "LaKeith Stanfield", "Brian Tyree Henry",
+        "Colman Domingo", "Da'Vine Joy Randolph", "America Ferrera", "Lily Gladstone"
+      ]
+    },
+    "B-List": {
+      "salary_range": "$3-8M per film",
+      "actors": [
+        "John Boyega", "John Krasinski", "Emily Blunt", "Jessica Chastain",
+        "Viola Davis", "Lupita Nyong'o", "Paul Rudd", "Jason Sudeikis",
+        "Miles Teller", "Saoirse Ronan", "Rachel McAdams", "Elizabeth Olsen",
+        "Hailee Steinfeld", "Dave Bautista", "John Cena", "Simu Liu",
+        "Awkwafina", "Colin Farrell", "Michael Fassbender", "Jake Gyllenhaal",
+        "Jeremy Renner", "Josh Brolin", "Ethan Hawke", "Willem Dafoe",
+        "Mark Ruffalo", "Paul Dano", "Kristen Stewart", "Dakota Johnson",
+        "Maitreyi Ramakrishnan", "Aubrey Plaza", "Jodie Comer", "Sadie Sink",
+        "Maya Hawke", "Finn Wolfhard", "Millie Bobby Brown", "Noah Centineo",
+        "Lana Condor", "Ross Lynch", "Kiernan Shipka", "Thomasin McKenzie",
+        "Hunter Schafer", "Dominic Fike", "Caleb McLaughlin", "Priah Ferguson"
       ]
     },
     "Rising Stars": {

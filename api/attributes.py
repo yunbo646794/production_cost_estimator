@@ -120,12 +120,15 @@ def detect_star_power(cast_names: list) -> str:
     """Detect star power from cast names."""
     tiers = load_actor_tiers()["tiers"]
     a_list = set(tiers["A-List"]["actors"])
+    a_list_cusp = set(tiers["A-List Cusp"]["actors"])
     b_list = set(tiers["B-List"]["actors"])
 
     top_cast = (cast_names or [])[:5]
 
     if any(name in a_list for name in top_cast[:3]):
         return "A-List"
+    if any(name in a_list_cusp for name in top_cast[:3]):
+        return "A-List Cusp"
     if any(name in b_list for name in top_cast):
         return "B-List"
     if top_cast:
