@@ -89,16 +89,42 @@ selected = st_searchbox(
     default_options=[("🎬 The Dark Knight (2008)", {"tmdb_id": 155, "media_type": "movie"})],
 )
 
-# Display selected item details
+# Load data early so button can appear at top
+data = None
+errors = []
 if selected:
     tmdb_id = selected["tmdb_id"]
     media_type = selected["media_type"]
-
     with st.spinner("Loading details..."):
         api_key = get_secret("TMDB_API_KEY")
         tmdb = TMDbClient(api_key)
         data, errors = get_merged_details(tmdb, tmdb_id, media_type)
 
+# Add to Comparison button (at top for visibility)
+if data:
+    can_add = len(st.session_state.compare_titles) < 5
+    already_added = any(t.get("tmdb_id") == data.get("tmdb_id") for t in st.session_state.compare_titles)
+    if can_add and not already_added:
+        if st.button("➕ Add to Comparison", type="secondary", key=f"add_top_{data.get('tmdb_id')}"):
+            st.session_state.compare_titles.append(data)
+            st.success(f"Added '{data['title']}' to comparison")
+            st.rerun()
+    elif already_added:
+        st.info("✓ Already in comparison")
+    else:
+        st.warning("Comparison full (max 5 titles)")
+
+# Comparison status prompt
+compare_count = len(st.session_state.compare_titles)
+if compare_count == 0:
+    st.info("📊 **Compare titles:** Search and add up to 5 titles to compare side-by-side")
+elif compare_count < 2:
+    st.info(f"📊 **{compare_count}/5 titles added** — Add at least one more to compare")
+else:
+    st.success(f"📊 **{compare_count}/5 titles ready to compare** — Scroll down to see comparison")
+
+# Display selected item details
+if selected:
     if errors:
         for error in errors:
             st.warning(error)
@@ -370,20 +396,6 @@ if selected:
             attr_html += "</div>"
             st.markdown(attr_html, unsafe_allow_html=True)
 
-        # Add to comparison button
-        can_add = len(st.session_state.compare_titles) < 5
-        already_added = any(t.get("tmdb_id") == data.get("tmdb_id") for t in st.session_state.compare_titles)
-
-        if can_add and not already_added:
-            if st.button("➕ Add to Comparison", type="secondary"):
-                st.session_state.compare_titles.append(data)
-                st.success(f"Added '{data['title']}' to comparison")
-                st.rerun()
-        elif already_added:
-            st.info("✓ Already in comparison")
-        else:
-            st.warning("Comparison full (max 5 titles)")
-
 # --- Title Comparison Section ---
 if len(st.session_state.compare_titles) >= 2:
     st.divider()
@@ -402,12 +414,14 @@ if len(st.session_state.compare_titles) >= 2:
 
     html = f"""
     <style>
-    .comp-table {{ width: 100%; border-collapse: collapse; }}
+    body {{ background-color: #0e1117; color: #fafafa; margin: 0; padding: 0; font-family: 'Source Sans Pro', sans-serif; }}
+    .comp-table {{ width: 100%; border-collapse: collapse; background-color: #0e1117; }}
     .comp-table td {{
         vertical-align: top;
         padding: 12px;
         border-bottom: 1px solid #333;
         width: {col_width}%;
+        color: #fafafa;
     }}
     .comp-table tr.section-header td {{
         background: #1e3a5f;
@@ -419,11 +433,11 @@ if len(st.session_state.compare_titles) >= 2:
     }}
     .comp-poster {{ text-align: center; }}
     .comp-poster img {{ max-width: 150px; border-radius: 8px; }}
-    .comp-title {{ font-weight: 600; font-size: 14px; }}
+    .comp-title {{ font-weight: 600; font-size: 14px; color: #fafafa; }}
     .comp-title a {{ color: #58a6ff; text-decoration: none; }}
     .comp-title a:hover {{ text-decoration: underline; }}
-    .comp-subtitle {{ color: #888; font-size: 12px; }}
-    .comp-value {{ font-size: 13px; }}
+    .comp-subtitle {{ color: #aaa; font-size: 12px; }}
+    .comp-value {{ font-size: 13px; color: #fafafa; }}
     .profit-pos {{ color: #4ade80; }}
     .profit-neg {{ color: #f87171; }}
     </style>
@@ -549,7 +563,7 @@ if len(st.session_state.compare_titles) >= 2:
 
     html += "</table>"
 
-    st.markdown(html, unsafe_allow_html=True)
+    components.html(html, height=800, scrolling=True)
 
 # Floating Feedback Bar
 FEEDBACK_BAR = """
