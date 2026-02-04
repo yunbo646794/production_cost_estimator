@@ -87,7 +87,7 @@ def load_titles_db():
 
 
 # Attribute Definitions
-FORMAT_OPTIONS = ["Feature Film", "TV Series", "Limited Series", "Documentary", "Animation"]
+FORMAT_OPTIONS = ["Studio Feature", "Indie Feature", "TV Series", "Limited Series", "Documentary", "Animation"]
 GENRE_OPTIONS = ["Action/Adventure", "Drama", "Comedy", "Horror/Thriller", "Sci-Fi/Fantasy"]
 RUNTIME_OPTIONS = ["Short", "Standard", "Long", "Epic"]
 PERIOD_OPTIONS = ["Contemporary", "Recent Past (1980-2010)", "Period (1900-1980)", "Historical (pre-1900)", "Futuristic"]
