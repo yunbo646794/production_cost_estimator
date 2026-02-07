@@ -1,5 +1,5 @@
 """
-Attribute auto-detection for Production Cost Estimator.
+Attribute auto-detection for Production Intelligence Platform.
 Computes 5 attributes from TMDb movie data.
 """
 import os
@@ -100,9 +100,10 @@ def detect_action_complexity(genres: list, crew_jobs: list) -> str:
 
 
 def detect_production_scale(companies: list, budget_raw: int) -> str:
-    """Detect production scale from actual budget only."""
+    """Detect production scale from budget, with company fallback."""
     budget = budget_raw or 0
 
+    # Primary: Use actual budget if available
     if budget >= 100_000_000:
         return "Blockbuster ($100M+)"
     if budget >= 50_000_000:
@@ -115,7 +116,24 @@ def detect_production_scale(companies: list, budget_raw: int) -> str:
         return "Ultra-Low ($2.5-5M)"
     if budget > 0:
         return "Micro (<$2.5M)"
-    return "Unknown"  # No budget data available
+
+    # Fallback: Use production company when budget unknown
+    if companies:
+        studio_tiers = load_studio_tiers()["tiers"]
+        # Map tier names to UI scale names
+        tier_to_scale = {
+            "Blockbuster": "Blockbuster ($100M+)",
+            "Major Studio": "Major Studio ($50-100M)",
+            "Mid-Budget": "Mid-Budget ($20-50M)",
+            "Indie": "Low-Budget ($5-20M)",
+            "Micro": "Micro (<$2.5M)",
+        }
+        for company in companies:
+            for tier_name, tier_data in studio_tiers.items():
+                if company in tier_data.get("companies", []):
+                    return tier_to_scale.get(tier_name, "Unknown")
+
+    return "Unknown"
 
 
 def detect_star_power(cast_names: list) -> str:

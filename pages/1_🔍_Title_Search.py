@@ -335,9 +335,9 @@ if selected:
             if data.get("homepage"):
                 st.markdown(f"**Official Site:** [{data['homepage'][:40]}...]({data['homepage']})" if len(data.get("homepage", "")) > 40 else f"**Official Site:** [{data['homepage']}]({data['homepage']})")
 
-        # Computed Attributes (for Cost Estimator)
+        # Computed Attributes (for Production Intelligence Platform)
         with st.expander("Computed Attributes", expanded=True):
-            st.caption("Auto-detected attributes used for finding comparable titles in the Cost Estimator")
+            st.caption("Auto-detected attributes used for finding comparable titles in the Production Intelligence Platform")
 
             # Get raw data for explanations
             budget_raw = data.get("budget_raw", 0)

@@ -12,7 +12,7 @@ from estimator import adjust_for_inflation, format_currency
 
 load_dotenv()
 
-st.set_page_config(page_title="Cost Estimator", page_icon="💰", layout="wide")
+st.set_page_config(page_title="Production Intelligence Platform", page_icon="💰", layout="wide")
 
 # Google Analytics
 GA_TRACKING_CODE = """
@@ -52,7 +52,7 @@ def get_recency_multiplier(year: int) -> float:
     else:
         return 0.7   # 6 years old (edge of window)
 
-st.title("💰 Production Cost Estimator")
+st.title("💰 Production Intelligence Platform")
 
 st.markdown("Select attributes for your project to find comparable titles and estimate production costs.")
 

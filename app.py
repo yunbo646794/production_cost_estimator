@@ -283,7 +283,7 @@ with col2:
 <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #b8960c); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">
 <img src="{DOLLAR_ICON_URI}" style="width: 36px; height: 36px;">
 </div>
-<div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; text-align: center; margin-bottom: 0.5rem;">Cost Estimator</div>
+<div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; text-align: center; margin-bottom: 0.5rem;">Production Intelligence Platform</div>
 <p style="color: #a0aec0; text-align: center; margin-bottom: 1.25rem; font-size: 0.95rem;">Find comp titles in minutes — not days.</p>
 <div style="margin-bottom: 1rem;">
 <div style="font-size: 0.8rem; font-weight: 600; color: #d4af37; text-transform: uppercase; margin-bottom: 0.5rem;">Features</div>
