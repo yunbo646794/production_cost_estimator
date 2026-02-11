@@ -88,7 +88,7 @@ def load_titles_db():
 
 # Attribute Definitions
 FORMAT_OPTIONS = ["Studio Feature", "Indie Feature", "TV Series", "Limited Series", "Documentary", "Animation"]
-GENRE_OPTIONS = ["Action/Adventure", "Drama", "Comedy", "Horror", "Thriller", "Sci-Fi/Fantasy", "Romance", "Documentary"]
+GENRE_OPTIONS = ["Action/Adventure", "Drama", "Comedy", "Horror", "Thriller", "Sci-Fi/Fantasy", "Romance", "Documentary", "Kids/Family"]
 RUNTIME_OPTIONS = ["15 min", "30 min", "60 min", "90 min", "120 min", "150+ min"]
 PERIOD_OPTIONS = ["Contemporary", "Recent Past (1980-2010)", "Period (1900-1980)", "Historical (pre-1900)", "Futuristic"]
 STAR_POWER_OPTIONS = ["A-List", "A-List Cusp", "B-List", "Rising Stars", "Ensemble/Unknown"]
@@ -106,21 +106,28 @@ st.subheader("Project Attributes")
 col1, col2 = st.columns(2)
 
 with col1:
-    format_type = st.selectbox("1. Format", FORMAT_OPTIONS, index=0)
+    format_type = st.selectbox("1. Format", FORMAT_OPTIONS, index=0,
+                                help="Type of production: theatrical feature, TV series, documentary, etc.")
     genres = st.multiselect("2. Genre(s)", GENRE_OPTIONS, default=["Drama"],
                             help="Select one or more genres (first = primary)")
     runtime = st.selectbox("3. Runtime", RUNTIME_OPTIONS, index=3,
                           help="Target runtime for your project")
-    period = st.selectbox("4. Period/Era", PERIOD_OPTIONS, index=0)
-    star_power = st.selectbox("5. Star Power", STAR_POWER_OPTIONS, index=2)
+    period = st.selectbox("4. Period/Era", PERIOD_OPTIONS, index=0,
+                          help="When is your story set? Affects set design and costume costs.")
+    star_power = st.selectbox("5. Star Power", STAR_POWER_OPTIONS, index=2,
+                              help="**A-List:** e.g. Tom Cruise, Margot Robbie | **B-List:** e.g. John Krasinski, Aubrey Plaza | **Rising:** e.g. Jenna Ortega, Barry Keoghan | **Ensemble:** Unknown cast")
 
 with col2:
     vfx = st.selectbox("6. VFX Intensity", VFX_OPTIONS, index=2,
-                       help="**Heavy:** 50%+ CGI shots (Marvel, Avatar) | **Moderate:** 20-50% VFX (action films) | **Light:** <20% VFX (minor enhancements) | **Practical Only:** No CGI, practical effects only")
-    locations = st.selectbox("7. Location Count", LOCATION_OPTIONS, index=1)
-    action = st.selectbox("8. Action Complexity", ACTION_OPTIONS, index=2)
-    country = st.selectbox("9. Production Country", COUNTRY_OPTIONS, index=0)
-    scale = st.selectbox("10. Production Scale", SCALE_OPTIONS, index=2)
+                       help="**Heavy:** e.g. Avatar, Avengers | **Moderate:** e.g. Top Gun, John Wick | **Light:** e.g. The Holdovers, Past Lives | **Practical Only:** e.g. 12 Angry Men, My Dinner with Andre")
+    locations = st.selectbox("7. Filming Locations", LOCATION_OPTIONS, index=1,
+                             help="Number of distinct filming locations needed for your production")
+    action = st.selectbox("8. Action Complexity", ACTION_OPTIONS, index=2,
+                          help="**High:** e.g. Mission Impossible, Mad Max | **Moderate:** e.g. The Batman, Sicario | **Light:** e.g. Knives Out, Get Out | **Dialogue-Driven:** e.g. Marriage Story, The Father")
+    country = st.selectbox("9. Production Region", COUNTRY_OPTIONS, index=0,
+                           help="Where your production company is based. Matches comparable titles from the same region.")
+    scale = st.selectbox("10. Production Scale", SCALE_OPTIONS, index=2,
+                         help="Rough scale of your budget")
 
 st.divider()
 

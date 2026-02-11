@@ -17,6 +17,7 @@ GENRE_MAP = {
     "Sci-Fi/Fantasy": ["Science Fiction", "Fantasy"],
     "Romance": ["Romance"],
     "Documentary": ["Documentary"],
+    "Kids/Family": ["Family", "Animation"],
 }
 
 # Scale tiers in order (for adjacency matching)
@@ -90,6 +91,7 @@ def matches_genre(user_genres: list, title_genres: list) -> tuple[float, str]:
         "Sci-Fi/Fantasy": ["Adventure", "Action"],
         "Comedy": ["Romance"],
         "Romance": ["Drama", "Comedy"],
+        "Kids/Family": ["Comedy", "Adventure", "Fantasy"],
     }
 
     for user_genre in user_genres:
